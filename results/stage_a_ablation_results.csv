@@ -1,0 +1,5 @@
+Ablation_Mode,HR@1,HR@5,HR@10,HR@20,HR@30,MRR,Mean_Rank,n_test_events
+market_only,0.0,1.0,1.0,1.0,1.0,0.5,2.0,1
+channel_history,0.0,1.0,1.0,1.0,1.0,0.5,2.0,1
+cross_source,0.0,1.0,1.0,1.0,1.0,0.5,2.0,1
+combined,0.0,1.0,1.0,1.0,1.0,0.5,2.0,1

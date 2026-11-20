@@ -1,0 +1,9 @@
+{
+  "single_coin_p50_ms": 0.393,
+  "single_coin_p99_ms": 0.556,
+  "exchange_50_coins_p50_ms": 0.49,
+  "exchange_50_coins_p99_ms": 0.76,
+  "max_allowable_delay_s": 25.0,
+  "realtime_margin_pct": 99.998,
+  "operational_verdict": "Real-Time Compliant (Sub-50ms Exchange Latency)"
+}

@@ -1,0 +1,13 @@
+Feature,Attribution_Impact,Signal_Group,Relative_Importance_Pct
+hour_cos,0.000165876597748138,Temporal Signal,40.6094371335777
+pv_corr_5,9.061583114089444e-05,Market Microstructure,22.184310191908025
+pv_corr_50,8.643139153718948e-05,Market Microstructure,21.159887582976037
+dist_ma_14,2.4099485017359257e-05,Market Microstructure,5.899967415837803
+ma_cross_ratio,1.5399442418129183e-05,Market Microstructure,3.7700477177660625
+rolling_return_50,1.3500973182090092e-05,Price Signal,3.3052698760597807
+rolling_return_10,6.8143044700264e-06,Price Signal,1.6682586497509768
+rsi,3.524548446875997e-06,Momentum Signal,0.8628699317488044
+volume_change,2.2055296540202107e-06,Volume Signal,0.5399515003748051
+log_return,0.0,Price Signal,0.0
+ma_14,0.0,Market Microstructure,0.0
+dist_ma_7,0.0,Market Microstructure,0.0

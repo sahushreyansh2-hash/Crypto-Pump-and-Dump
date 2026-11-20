@@ -1,0 +1,16 @@
+Configuration,Target_FAR_Budget,Actual_FAR_Daily,Event_Recall,Pre_Onset_Alerts,Mean_Detection_Delay_s,Operating_Threshold
+ETASE Alone,5.0,5.0,0.0%,0,N/A,0.0324
+Cascade (K=10),5.0,0.0,0.0%,0,N/A,0.01
+Cascade (K=20),5.0,0.0,0.0%,0,N/A,0.01
+ETASE Alone,10.0,10.0,0.0%,0,N/A,0.0256
+Cascade (K=10),10.0,0.0,0.0%,0,N/A,0.01
+Cascade (K=20),10.0,0.0,0.0%,0,N/A,0.01
+ETASE Alone,20.0,21.0,0.0%,0,N/A,0.0184
+Cascade (K=10),20.0,0.0,0.0%,0,N/A,0.01
+Cascade (K=20),20.0,0.0,0.0%,0,N/A,0.01
+ETASE Alone,30.0,22.0,0.0%,0,N/A,0.01
+Cascade (K=10),30.0,0.0,0.0%,0,N/A,0.01
+Cascade (K=20),30.0,0.0,0.0%,0,N/A,0.01
+ETASE Alone,40.0,22.0,0.0%,0,N/A,0.01
+Cascade (K=10),40.0,0.0,0.0%,0,N/A,0.01
+Cascade (K=20),40.0,0.0,0.0%,0,N/A,0.01

@@ -1,0 +1,5 @@
+experiment,feature_groups,n_features,precision,recall,f1,pr_auc,roc_auc,false_alarm_rate,detection_rate,mean_lead_time_min,threshold,available,note
+market_only,"['price', 'volume', 'volatility', 'price_volume']",38,0.0,0.0,0.0,,,0.0,0.0,,0.5,True,
+temporal_only,"['time', 'momentum']",12,0.0,0.0,0.0,,,0.0029411764705882353,0.0,,0.5,True,
+market_temporal,"['price', 'volume', 'volatility', 'price_volume', 'time', 'momentum']",50,0.0,0.0,0.0,,,0.0,0.0,,0.5,True,
+market_temporal_context,"['price', 'volume', 'volatility', 'price_volume', 'time', 'momentum', 'context']",0,,,,,,,,,,False,Context/channel features not available in current dataset.

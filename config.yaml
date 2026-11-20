@@ -1,0 +1,108 @@
+# ============================================================
+# Crypto Pump-and-Dump Early Detection — Configuration
+# ============================================================
+
+# ------ Dataset Paths ------
+data:
+  ohlcv_path: "data/raw/ohlcv.csv"              # OHLCV market data
+  pump_labels_path: "data/labels/pump_events.csv" # Known pump-event labels
+  processed_dir: "data/processed"
+  results_dir: "results"
+  models_dir: "models"
+
+# ------ Prediction Horizon (minutes) ------
+# Supported values: 5, 15, 30, 60
+# Change this to switch between prediction windows.
+prediction_horizon_minutes: 30
+
+# ------ Sequence Length (for temporal models) ------
+# Number of historical time-steps fed into LSTM / GRU / ETASE.
+sequence_length: 30
+
+# ------ Chronological Split Ratios ------
+train_ratio: 0.70
+validation_ratio: 0.15
+test_ratio: 0.15
+
+# ------ Random Seed ------
+random_seed: 42
+
+# ------ Feature Engineering ------
+features:
+  rolling_windows: [5, 10, 20, 50]     # rolling-window sizes (in bars)
+  rsi_period: 14
+  atr_period: 14
+  volume_zscore_window: 20
+  ma_periods: [7, 14, 30]              # moving-average periods
+
+# ------ Rule-Based Baseline Thresholds ------
+rule_based:
+  volume_zscore_threshold: 3.0
+  price_return_threshold: 0.03          # 3 % return
+  volatility_threshold: 2.5            # multiplier over rolling std
+
+# ------ Isolation Forest ------
+isolation_forest:
+  n_estimators: 200
+  contamination: 0.01
+  max_features: 1.0
+
+# ------ Logistic Regression ------
+logistic_regression:
+  max_iter: 1000
+  class_weight: "balanced"
+
+# ------ Random Forest ------
+random_forest:
+  n_estimators: 300
+  max_depth: 12
+  class_weight: "balanced"
+  min_samples_leaf: 20
+
+# ------ XGBoost ------
+xgboost:
+  n_estimators: 300
+  max_depth: 8
+  learning_rate: 0.05
+  scale_pos_weight: null               # auto-computed from class ratio
+  eval_metric: "aucpr"
+
+# ------ LSTM / GRU Temporal Model ------
+temporal_model:
+  model_type: "LSTM"                   # LSTM or GRU
+  hidden_size: 64
+  num_layers: 2
+  dropout: 0.3
+  learning_rate: 0.001
+  epochs: 50
+  batch_size: 64
+  patience: 7                          # early-stopping patience
+
+# ------ ETASE Framework ------
+etase:
+  market_hidden: 64
+  temporal_hidden: 64
+  context_hidden: 32                   # for future channel/history features
+  fusion_hidden: 64
+  dropout: 0.3
+  learning_rate: 0.001
+  epochs: 50
+  batch_size: 64
+  patience: 7
+
+# ------ Evaluation ------
+evaluation:
+  threshold_search_steps: 50           # granularity for threshold tuning
+  lead_time_bins: [1, 5, 10, 15, 30]   # minutes — for lead-time histogram
+
+# ------ Ablation Study ------
+ablation:
+  experiments:
+    - name: "market_only"
+      feature_groups: ["price", "volume", "volatility", "price_volume"]
+    - name: "temporal_only"
+      feature_groups: ["time", "momentum"]
+    - name: "market_temporal"
+      feature_groups: ["price", "volume", "volatility", "price_volume", "time", "momentum"]
+    - name: "market_temporal_context"
+      feature_groups: ["price", "volume", "volatility", "price_volume", "time", "momentum", "context"]

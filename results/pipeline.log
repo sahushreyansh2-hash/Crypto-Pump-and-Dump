@@ -1,0 +1,1109 @@
+2026-10-09 02:06:45,716  INFO      main — ============================================================
+2026-10-09 02:06:45,717  INFO      main — Crypto Pump-and-Dump Early Detection Pipeline
+2026-10-09 02:06:45,717  INFO      main — ============================================================
+2026-10-09 02:06:45,717  INFO      main — Config : config.yaml
+2026-10-09 02:06:45,717  INFO      main — Phase  : ALL
+2026-10-09 02:06:45,726  INFO      src.data_loader — Configuration loaded from C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\config.yaml
+2026-10-09 02:06:45,726  INFO      phase1 — ============================================================
+2026-10-09 02:06:45,726  INFO      phase1 — PHASE 1 — Data Loading & Validation
+2026-10-09 02:06:45,727  INFO      phase1 — ============================================================
+2026-10-09 02:06:45,727  INFO      src.data_loader — Loading OHLCV data from data\raw\ohlcv.csv …
+2026-10-09 02:06:45,753  ERROR     main — Phase 1 failed: to_datetime() got an unexpected keyword argument 'infer_datetime_format'
+Traceback (most recent call last):
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 411, in main
+    PHASES[phase_num](cfg, state)
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 111, in phase_1
+    state.ohlcv, state.pump_labels = load_all_data(cfg)
+                                     ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\src\data_loader.py", line 203, in load_all_data
+    ohlcv_df = load_ohlcv(ohlcv_path)
+               ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\src\data_loader.py", line 102, in load_ohlcv
+    df["timestamp"] = pd.to_datetime(df["timestamp"], utc=True, infer_datetime_format=True)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: to_datetime() got an unexpected keyword argument 'infer_datetime_format'
+2026-10-09 02:06:45,754  INFO      main — Continuing to next phase …
+2026-10-09 02:06:45,755  INFO      phase2 — ============================================================
+2026-10-09 02:06:45,755  INFO      phase2 — PHASE 2 — Preprocessing & Labeling
+2026-10-09 02:06:45,755  INFO      phase2 — ============================================================
+2026-10-09 02:06:45,755  ERROR     main — Phase 2 failed: object of type 'NoneType' has no len()
+Traceback (most recent call last):
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 411, in main
+    PHASES[phase_num](cfg, state)
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 124, in phase_2
+    state.ohlcv = preprocess(state.ohlcv)
+                  ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\src\preprocessing.py", line 123, in preprocess
+    logger.info("Preprocessing OHLCV data (%d rows) …", len(df))
+                                                        ^^^^^^^
+TypeError: object of type 'NoneType' has no len()
+2026-10-09 02:06:45,755  INFO      main — Continuing to next phase …
+2026-10-09 02:06:45,755  INFO      phase3 — ============================================================
+2026-10-09 02:06:45,755  INFO      phase3 — PHASE 3 — Feature Engineering
+2026-10-09 02:06:45,755  INFO      phase3 — ============================================================
+2026-10-09 02:06:45,756  INFO      src.features — Engineering features (rolling windows=[5, 10, 20, 50]) …
+2026-10-09 02:06:45,756  ERROR     main — Phase 3 failed: 'NoneType' object has no attribute 'groupby'
+Traceback (most recent call last):
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 411, in main
+    PHASES[phase_num](cfg, state)
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 142, in phase_3
+    state.featured = engineer_features(state.labeled, cfg)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\src\features.py", line 335, in engineer_features
+    df = add_price_features(df, rolling_windows, ma_periods)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\src\features.py", line 63, in add_price_features
+    df["pct_return"] = df.groupby("symbol")["close"].pct_change()
+                       ^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'groupby'
+2026-10-09 02:06:45,757  INFO      main — Continuing to next phase …
+2026-10-09 02:06:45,757  INFO      phase4 — ============================================================
+2026-10-09 02:06:45,757  INFO      phase4 — PHASE 4 — Chronological Split
+2026-10-09 02:06:45,757  INFO      phase4 — ============================================================
+2026-10-09 02:06:45,757  ERROR     main — Phase 4 failed: 'NoneType' object has no attribute 'groupby'
+Traceback (most recent call last):
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 411, in main
+    PHASES[phase_num](cfg, state)
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 166, in phase_4
+    state.train, state.val, state.test = chronological_split(
+                                         ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\src\split.py", line 62, in chronological_split
+    for symbol, group in df.groupby("symbol"):
+                         ^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'groupby'
+2026-10-09 02:06:45,757  INFO      main — Continuing to next phase …
+2026-10-09 02:06:45,757  INFO      phase5 — ============================================================
+2026-10-09 02:06:45,758  INFO      phase5 — PHASE 5 — Baseline Models
+2026-10-09 02:06:45,758  INFO      phase5 — ============================================================
+2026-10-09 02:06:45,758  ERROR     main — Phase 5 failed: 'NoneType' object is not subscriptable
+Traceback (most recent call last):
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 411, in main
+    PHASES[phase_num](cfg, state)
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 189, in phase_5
+    X_train = state.train[feature_cols].fillna(0)
+              ~~~~~~~~~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+2026-10-09 02:06:45,758  INFO      main — Continuing to next phase …
+2026-10-09 02:06:45,758  INFO      phase6 — ============================================================
+2026-10-09 02:06:45,758  INFO      phase6 — PHASE 6 — Temporal Model (LSTM/GRU)
+2026-10-09 02:06:45,758  INFO      phase6 — ============================================================
+2026-10-09 02:06:45,758  ERROR     main — Phase 6 failed: 'NoneType' object is not subscriptable
+Traceback (most recent call last):
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 411, in main
+    PHASES[phase_num](cfg, state)
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 232, in phase_6
+    X_train = state.train[feature_cols].fillna(0).values
+              ~~~~~~~~~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+2026-10-09 02:06:45,758  INFO      main — Continuing to next phase …
+2026-10-09 02:06:45,758  INFO      phase7 — ============================================================
+2026-10-09 02:06:45,758  INFO      phase7 — PHASE 7 — ETASE Framework
+2026-10-09 02:06:45,758  INFO      phase7 — ============================================================
+2026-10-09 02:06:45,759  ERROR     main — Phase 7 failed: 'NoneType' object is not subscriptable
+Traceback (most recent call last):
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 411, in main
+    PHASES[phase_num](cfg, state)
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 258, in phase_7
+    X_train = state.train[feature_cols].fillna(0)
+              ~~~~~~~~~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+2026-10-09 02:06:45,759  INFO      main — Continuing to next phase …
+2026-10-09 02:06:45,759  INFO      phase8 — ============================================================
+2026-10-09 02:06:45,759  INFO      phase8 — PHASE 8 — Evaluation
+2026-10-09 02:06:45,759  INFO      phase8 — ============================================================
+2026-10-09 02:06:45,759  ERROR     main — Phase 8 failed: 'NoneType' object is not subscriptable
+Traceback (most recent call last):
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 411, in main
+    PHASES[phase_num](cfg, state)
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 281, in phase_8
+    y_test = state.test["target"].values
+             ~~~~~~~~~~^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+2026-10-09 02:06:45,759  INFO      main — Continuing to next phase …
+2026-10-09 02:06:45,759  INFO      phase9 — ============================================================
+2026-10-09 02:06:45,759  INFO      phase9 — PHASE 9 — Ablation Study
+2026-10-09 02:06:45,759  INFO      phase9 — ============================================================
+2026-10-09 02:06:45,759  ERROR     main — Phase 9 failed: 'NoneType' object is not subscriptable
+Traceback (most recent call last):
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 411, in main
+    PHASES[phase_num](cfg, state)
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 309, in phase_9
+    X_train = state.train[feature_cols].fillna(0)
+              ~~~~~~~~~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+2026-10-09 02:06:45,760  INFO      main — Continuing to next phase …
+2026-10-09 02:06:45,760  INFO      phase10 — ============================================================
+2026-10-09 02:06:45,760  INFO      phase10 — PHASE 10 — Visualization
+2026-10-09 02:06:45,760  INFO      phase10 — ============================================================
+2026-10-09 02:06:49,310  INFO      matplotlib.font_manager — generated new fontManager
+2026-10-09 02:06:50,093  WARNING   phase10 — No summary_df — running evaluation first.
+2026-10-09 02:06:50,094  INFO      phase8 — ============================================================
+2026-10-09 02:06:50,094  INFO      phase8 — PHASE 8 — Evaluation
+2026-10-09 02:06:50,094  INFO      phase8 — ============================================================
+2026-10-09 02:06:50,094  ERROR     main — Phase 10 failed: 'NoneType' object is not subscriptable
+Traceback (most recent call last):
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 411, in main
+    PHASES[phase_num](cfg, state)
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 346, in phase_10
+    phase_8(cfg, state)
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 281, in phase_8
+    y_test = state.test["target"].values
+             ~~~~~~~~~~^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+2026-10-09 02:06:50,095  INFO      main — Continuing to next phase …
+2026-10-09 02:06:50,095  INFO      main — ============================================================
+2026-10-09 02:06:50,095  INFO      main — Pipeline finished.
+2026-10-09 02:06:50,095  INFO      main — ============================================================
+2026-10-09 02:08:28,773  INFO      main — ============================================================
+2026-10-09 02:08:28,774  INFO      main — Crypto Pump-and-Dump Early Detection Pipeline
+2026-10-09 02:08:28,774  INFO      main — ============================================================
+2026-10-09 02:08:28,774  INFO      main — Config : config.yaml
+2026-10-09 02:08:28,774  INFO      main — Phase  : ALL
+2026-10-09 02:08:28,781  INFO      src.data_loader — Configuration loaded from C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\config.yaml
+2026-10-09 02:08:28,781  INFO      phase1 — ============================================================
+2026-10-09 02:08:28,781  INFO      phase1 — PHASE 1 — Data Loading & Validation
+2026-10-09 02:08:28,781  INFO      phase1 — ============================================================
+2026-10-09 02:08:28,781  INFO      src.data_loader — Loading OHLCV data from data\raw\ohlcv.csv …
+2026-10-09 02:08:28,815  INFO      src.data_loader — Loading pump-event labels from data\labels\pump_events.csv …
+2026-10-09 02:08:28,829  WARNING   src.data_loader — Pump-label file contains symbols not found in OHLCV data: {'ONG/BTC', 'NAX/BTC', 'CNNC/BTC', 'WOM/USDT', 'ORC/BTC', 'DUSK/BTC', 'MOD/BTC', 'THC/BTC', 'PLR/BTC', 'OAS/BTC', 'UNB/BTC', 'CXT/BTC', 'AEON/BTC', 'SKIN/BTC', 'RYA/BTC', 'UTC/BTC', 'CHESS/BTC', 'STAR/BTC', 'TUBER/USDT', 'BLITZ/BTC', 'BXH/USDT', 'SUSD/BTC', 'ENRG/BTC', 'UKG/BTC', 'DVPN/USDT', 'AEROX/USDT', 'HALV/USDT', 'ING/BTC', 'EZ/BTC', 'TES/BTC', 'UMO/BTC', 'STV/BTC', 'TDS/BTC', 'DZC/BTC', 'AZK/BTC', 'ICN/BTC', 'BTF/USDT', 'CC/BTC', 'CAP/BTC', 'SRN/BTC', 'TAJ/BTC', 'STEEM/BTC', 'IOTX/BTC', 'IND/BTC', 'ARN/BTC', 'PNT/BTC', 'GO/BTC', 'BERN/BTC', 'SCRT/BTC', 'BLN/BTC', 'ABC/BTC', 'PIVX/BTC', 'PEOS/USDT', 'ARI/BTC', 'KING/BTC', 'CRUMB/BTC', 'SDT/USDT', 'XDEX/USDT', 'BEST/BTC', 'DNT/BTC', 'STND/BTC', 'GRS/BTC', 'KAT/BTC', 'POWR/BTC', 'SIG/BTC', 'RNS/BTC', 'VRC/BTC', 'ZER/BTC', 'LUN/BTC', 'CHR/USDT', 'ETI/USDT', 'CVC/BTC', 'PRO/BTC', 'GPL/BTC', 'QSP/BTC', 'TIE/BTC', 'PPC/BTC', 'ORB/BTC', 'MAGE/BTC', 'SMC/BTC', 'UFR/BTC', 'BBT/BTC', 'AV/BTC', 'BQT/USDT', 'NXC/BTC', 'SEQ/BTC', 'HQX/BTC', 'FTM/BTC', 'SRNT/BTC', 'GUA/BTC', 'ATM/BTC', 'BNW/USDT', 'DCNT/USDT', 'BUM/BTC', 'VERS/BTC', 'CLOAK/BTC', 'VERI/BTC', 'BDL/BTC', 'GNR/BTC', 'OPAL/BTC', 'THETA/BTC', 'INFX/BTC', 'HAL/BTC', 'GEO/BTC', 'SPACE/BTC', 'AMA/USDT', 'NLG/BTC', 'XBP/BTC', 'FUEL/BTC', 'MBONK/BTC', 'ENJ/BTC', 'INS/BTC', 'BSL/USDT', 'MODEFI/USDT', 'MANIA/BTC', 'DGCL/BTC', 'GELD/BTC', 'FBN/USDT', 'CFT/BTC', 'XXX/BTC', 'BDO/USDT', 'KRONE/BTC', 'SYNX/BTC', 'AXIAV3/USDT', 'CON/BTC', 'ALL/BTC', 'BUSY/BTC', 'PINK/BTC', 'GNO/BTC', 'XZC/BTC', 'CS/USDT', '611/BTC', 'MATRX/BTC', 'MATIC/BTC', 'REN/BTC', 'TKN/BTC', 'CWV/USDT', 'BCPT/BTC', 'BAS/USDT', 'PCOIN/BTC', 'AOA/BTC', 'LEMON/BTC', 'VVI/BTC', 'MYST/BTC', 'NBT/BTC', 'PTI/USDT', 'SASHIMI/BTC', 'SBD/BTC', 'AST/BTC', 'ETHOS/BTC', 'STPT/BTC', 'GHD/BTC', 'DLT/BTC', 'JST/USDT', 'FIRE/BTC', 'TCT/BTC', 'TON/USDT', 'NXS/BTC', 'MXC/USDT', 'BQX/BTC', 'STORJ/BTC', 'WINGS/BTC', 'SIB/BTC', 'NAS/BTC', 'SKY/BTC', 'CREA/BTC', 'SAK/BTC', 'NKN/USDT', 'KEEP/USDT', 'RBT/BTC', 'LVG/BTC', 'TOP/BTC', 'DOX/BTC', 'POA/BTC', 'XPTX/BTC', 'XZX/BTC', 'GUM/BTC', 'ORC/USDT', 'BQT/BTC', 'NAV/BTC', 'BEEZ/BTC', 'DORA/USDT', 'AE/BTC', 'WRX/BTC', 'AAC/USDT', 'UNIC/BTC', 'BVB/BTC', 'RLC/BTC', 'CRPT/BTC', 'BTS/USDT', 'DEP/USDT', 'REAP/USDT', 'TNB/BTC', 'ASCS/BTC', 'MMDA/USDT', 'SAMK/USDT', 'GTEA/BTC', 'POLY/BTC', 'DAI/BTC', 'EDO/BTC', 'UNITS/BTC', 'XID/BTC', 'BCS/BTC', 'BTSY/BTC', 'NBOT/USDT', 'CFX/BTC', 'COAL/BTC', 'ESC/USDT', 'GUN/BTC', 'TUSD/BTC', 'FXS/BTC', 'BZRX/BTC', 'MASH/USDT', 'GSY/ETH', 'SNX/BTC', 'ADX/BTC', 'QBT/BTC', 'LEND/BTC', 'IQN/BTC', 'ERC/BTC', 'CAN/BTC', 'DBXC/USDT', 'FC2/BTC', 'QKC/BTC', 'ICX/USDT', 'EGC/BTC', 'MNZ/BTC', 'DATA/BTC', 'NWC/BTC', 'IOC/BTC', 'EBG/BTC', 'WNXM/BTC', 'PASL/BTC', 'OK/BTC', 'CLAM/BTC', 'XRL/BTC', 'SNGLS/BTC', 'NETKO/BTC', 'HDG/BTC', 'IVY/BTC', 'MOJO/BTC', 'OSC/BTC', 'SBEAR/USDT', 'R/BTC', 'HAUS/BTC', 'IXT/BTC', 'TFD/BTC', 'SWT/BTC', 'GRW/BTC', 'BNC/BTC', 'ENJ/USDT', 'KMD/BTC', 'NYAN/BTC', 'RNT/USDT', 'SPR/BTC', 'DGB/BTC', 'HGR/BTC', 'DUO/USDT', 'SOIL/BTC', 'BSC/USDT', 'HAC/BTC', 'MDA/BTC', 'SDC/BTC', 'EMT/BTC', 'NMR/BTC', 'OAX/BTC', 'GREENF/BTC', 'LDC/BTC', 'EVO/BTC', 'TFF/USDT', 'LINK/BTC', 'MORE/BTC', 'EMC2/BTC', 'MTH/BTC', 'CGEN/BTC', 'MAY/BTC', 'DCRE/BTC', 'SYS/BTC', 'AUV/USDT', 'MARS/BTC', 'PAI/BTC', 'SEL/BTC', 'BCC/BTC', 'TKS/BTC', 'CHAT/BTC', 'HYFIT/USDT', 'TX/BTC', 'BOX/BTC', 'STORJ/USDT', 'POFI/USDT', 'DOGE/BTC', 'AUR/BTC', 'OPCX/BTC', 'BNBX/BTC', 'AMM/BTC', 'ONT/BTC', 'DKA/BTC', 'BSTY/BTC', 'GNT/BTC', 'CLR/BTC', 'YOYOW/BTC', 'QLC/BTC', 'GET/BTC', 'BTCD/BTC', 'GDM/USDT', 'GRC/BTC', 'LIBFX/USDT', 'SNRG/BTC', 'TIX/BTC', 'PAL/BTC', 'Q2C/BTC', 'SAN/BTC', 'FCD/BTC', 'ETL/BTC', 'PPT/BTC', 'XST/BTC', 'DARK/BTC', 'DISTX/USDT', 'FLDC/BTC', 'YOVI/BTC', 'TIME/BTC', 'U/BTC', 'PDC/BTC', 'BON/BTC', 'CURE/BTC', 'SPT/BTC', 'BIP/BTC', 'BTS/BTC', 'GRN/BTC', 'ULU/USDT', 'ITEN/USDT', 'VITE/BTC', 'BSC/BTC', 'EUC/BTC', 'MET/BTC', 'TSL/USDT', 'PAX/BTC', 'EET/BTC', 'FUN/BTC', 'MNE/BTC', 'SHRF/BTC', 'CROC/BTC', 'DTB/BTC', 'TRK/BTC', 'XAUR/BTC', 'GRT/BTC', 'FLAX/BTC', 'FRN/BTC', 'BASIC/USDT', 'OXY/BTC', 'EQT/BTC', 'ARDR/BTC', 'NULS/BTC', 'QOB/USDT', 'LOOM/BTC', 'ADT/BTC', 'LSK/BTC', 'CHRG/BTC', 'INPAY/BTC', 'DOVE/USDT', 'YOYO/BTC', 'STEEL/USDT', 'CTXC/BTC', 'RCN/BTC', 'ZSE/BTC', 'SOP/USDT', 'ELF/BTC', 'SUP/USDT', 'BAT/BTC', 'SOON/BTC', 'PIE/BTC', 'STORM/BTC', 'STY/BTC', 'ECOB/BTC', 'MCT/BTC', 'WHL/BTC', 'HC/BTC', 'EVX/BTC', 'PLC/BTC', 'FT/BTC', 'GOD/USDT', 'BLZ/BTC', 'FIO/BTC', 'VIBE/BTC', 'GAS/BTC', 'HONOR/BTC', 'UNIC/USDT', 'ASN/BTC', 'SOUL/BTC', 'WPR/BTC', 'SNT/BTC', 'OST/BTC', 'MLN/BTC', 'RDN/BTC', 'SUP/BTC', 'CL/BTC', 'SWP/USDT', 'BBEL/BTC', 'UBT/BTC', 'SUB/BTC', 'CREAM/USDT', 'XRE/BTC', 'CRACK/BTC', 'DAS/BTC', 'XMG/BTC', 'MANA/BTC', 'CHSB/BTC', 'PARTY/BTC', 'EIDOS/USDT', 'FLM/BTC', 'SBIT/BTC', 'RIYA/BTC', 'REV/BTC', 'STOX/USDT', 'XTK/USDT', 'ELM/BTC', 'CTIC3/BTC', 'RYTK/BTC', 'AUTO/BTC', 'MITH/BTC', 'TORQ/BTC', 'EXCL/BTC', 'DALC/BTC', 'VEC/BTC', 'BRK/BTC', 'PHB/BTC', 'SWM/BTC', 'IQT/BTC', 'ACOIN/BTC', 'SKR/BTC', 'WABI/BTC', 'BLZ/USDT', 'GBG/BTC', 'REP/BTC', 'KALM/USDT', 'REQ/BTC', 'DGD/BTC', 'SCL/BTC', 'SLING/BTC', 'REA/BTC', 'FC/BTC', 'NEVA/BTC', 'BTZ/BTC', 'GAM/BTC', 'CEXLT/USDT', 'NET/BTC', 'ARGUS/BTC', 'GXS/BTC', 'BONDED/USDT', 'ERY/BTC', 'BCD/BTC', 'EMP/BTC', 'DRXNE/BTC', 'MBRS/BTC', 'BELT/USDT', 'NEBL/BTC', 'BUBO/BTC', 'CND/BTC', 'AKRO/USDT', 'AGRS/BTC', 'FBS/USDT', 'MGO/BTC', 'DREP/BTC', 'PTC/BTC', 'DRACO/BTC', 'ZEN/BTC', 'IRL/BTC', 'CNO/BTC', 'GTO/BTC', 'ARK/BTC', 'M1/BTC', 'TNT/BTC', 'UFO/USDT', 'FDS/USDT', 'MNSTP/USDT', 'TB/BTC', '8BIT/BTC', 'BLOCK/BTC', 'AMB/BTC', 'ELC/BTC', 'SPHR/BTC', 'POE/BTC', 'FUZZ/BTC', 'QTL/BTC', 'BRX/BTC', 'BRD/BTC', 'DODO/USDT', 'INJ/USDT', 'VC/USDT', 'ZNY/BTC', 'DRPU/BTC', 'VIA/BTC', 'OTN/BTC', 'XCO/BTC', 'ATH/BTC', 'HTDF/USDT', 'FAIR/BTC', 'LEV/USDT', 'COINV/BTC', 'EDC/BTC', 'CDT/BTC', 'OCEAN/BTC', 'RETRY/USDT', 'XPRO/BTC', 'SNM/BTC', 'IDEX/BTC', 'ABT/BTC', 'QQQ/USDT', 'OMNI/BTC', 'FLY/USDT', 'PAMP/USDT', 'INK/USDT', 'ALIS/BTC', 'MTH/USDT', 'LDM/BTC', 'LRC/BTC', 'CGG/USDT', 'WW/BTC', 'FANS/BTC', 'VIB/BTC', 'DVI/USDT', 'GSY/BTC', 'SEV/BTC', 'ACM/BTC', 'EFL/BTC', 'SLS/BTC', 'XGM/USDT', 'BOLI/BTC', 'DADI/BTC', 'ETT/BTC', 'SNPT/BTC', 'DS/USDT', 'WTC/BTC', 'DCT/BTC', 'GVT/BTC', 'CQST/BTC', 'BTCST/BTC', 'WSP/BTC', 'KNC/BTC', 'GENS/USDT', 'MNM/BTC', 'SLR/BTC', 'C20/BTC', 'UBQ/BTC', 'BYC/BTC'}. These labels will be ignored during labeling.
+2026-10-09 02:08:28,830  INFO      phase1 — OHLCV  : 2500 rows, 5 symbols
+2026-10-09 02:08:28,830  INFO      phase1 — Labels : 2445 pump events
+2026-10-09 02:08:28,830  INFO      phase1 — Phase 1 complete.
+2026-10-09 02:08:28,830  INFO      phase2 — ============================================================
+2026-10-09 02:08:28,830  INFO      phase2 — PHASE 2 — Preprocessing & Labeling
+2026-10-09 02:08:28,830  INFO      phase2 — ============================================================
+2026-10-09 02:08:28,830  INFO      src.preprocessing — Preprocessing OHLCV data (2500 rows) …
+2026-10-09 02:08:28,854  INFO      src.preprocessing —   APPC/BTC — detected frequency: 0 days 00:05:00
+2026-10-09 02:08:28,860  INFO      src.preprocessing —   BNT/BTC — detected frequency: 0 days 00:05:00
+2026-10-09 02:08:28,862  INFO      src.preprocessing —   BTC/USDT — detected frequency: 0 days 00:05:00
+2026-10-09 02:08:28,863  INFO      src.preprocessing —   ETH/USDT — detected frequency: 0 days 00:05:00
+2026-10-09 02:08:28,864  INFO      src.preprocessing —   STMX/USDT — detected frequency: 0 days 00:05:00
+2026-10-09 02:08:28,864  INFO      src.preprocessing — Preprocessing complete: 2500 rows remain.
+2026-10-09 02:08:28,865  INFO      src.labeling — Creating binary labels with prediction horizon = 30 minutes …
+2026-10-09 02:08:28,881  INFO      src.labeling — Labeling complete: 2500 total, 6 positive (0.24%), 2494 negative
+2026-10-09 02:08:28,888  INFO      phase2 — Label distribution:
+   symbol  total  positive  negative  pct_positive
+ APPC/BTC    500         0       500           0.0
+  BNT/BTC    500         0       500           0.0
+ BTC/USDT    500         0       500           0.0
+ ETH/USDT    500         0       500           0.0
+STMX/USDT    500         6       494           1.2
+2026-10-09 02:08:28,890  INFO      phase2 — Phase 2 complete.
+2026-10-09 02:08:28,890  INFO      phase3 — ============================================================
+2026-10-09 02:08:28,891  INFO      phase3 — PHASE 3 — Feature Engineering
+2026-10-09 02:08:28,891  INFO      phase3 — ============================================================
+2026-10-09 02:08:28,891  INFO      src.features — Engineering features (rolling windows=[5, 10, 20, 50]) …
+2026-10-09 02:08:28,983  INFO      src.features — Feature engineering complete: 50 feature columns across 6 groups.
+2026-10-09 02:08:28,983  INFO      src.features —   price          : 13 features
+2026-10-09 02:08:28,983  INFO      src.features —   volume         : 11 features
+2026-10-09 02:08:28,983  INFO      src.features —   volatility     : 8 features
+2026-10-09 02:08:28,983  INFO      src.features —   momentum       : 5 features
+2026-10-09 02:08:28,983  INFO      src.features —   time           : 7 features
+2026-10-09 02:08:28,983  INFO      src.features —   price_volume   : 6 features
+2026-10-09 02:08:28,987  INFO      phase3 — Dropped 250 rows with NaN features (from rolling windows).
+2026-10-09 02:08:29,136  INFO      phase3 — Featured data saved (2250 rows, 59 cols).
+2026-10-09 02:08:29,136  INFO      phase3 — Phase 3 complete.
+2026-10-09 02:08:29,137  INFO      phase4 — ============================================================
+2026-10-09 02:08:29,137  INFO      phase4 — PHASE 4 — Chronological Split
+2026-10-09 02:08:29,137  INFO      phase4 — ============================================================
+2026-10-09 02:08:29,146  INFO      src.split — Chronological split complete:
+2026-10-09 02:08:29,146  INFO      src.split —   Train : 1575 rows (70.0%)
+2026-10-09 02:08:29,146  INFO      src.split —   Val   : 335 rows (14.9%)
+2026-10-09 02:08:29,146  INFO      src.split —   Test  : 340 rows (15.1%)
+2026-10-09 02:08:29,153  INFO      phase4 — Split summary:
+split  rows  positive  negative  pct_positive                start_time                  end_time
+train  1575         6      1569         0.381 2021-06-14 04:10:00+00:00 2021-06-15 06:20:00+00:00
+  val   335         0       335         0.000 2021-06-15 06:25:00+00:00 2021-06-15 11:55:00+00:00
+ test   340         0       340         0.000 2021-06-15 12:00:00+00:00 2021-06-15 17:35:00+00:00
+2026-10-09 02:08:29,155  INFO      src.split — Split summary saved to results\split_summary.csv
+2026-10-09 02:08:29,155  INFO      phase4 — Phase 4 complete.
+2026-10-09 02:08:29,156  INFO      phase5 — ============================================================
+2026-10-09 02:08:29,156  INFO      phase5 — PHASE 5 — Baseline Models
+2026-10-09 02:08:29,156  INFO      phase5 — ============================================================
+2026-10-09 02:08:30,225  INFO      src.baselines — Training model: rule_based
+2026-10-09 02:08:30,229  INFO      src.baselines — Model rule_based saved to models\rule_based_model.joblib
+2026-10-09 02:08:30,232  INFO      src.baselines — Training model: logistic_regression
+2026-10-09 02:08:30,249  ERROR     main — Phase 5 failed: Input X contains infinity or a value too large for dtype('float64').
+Traceback (most recent call last):
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 411, in main
+    PHASES[phase_num](cfg, state)
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 198, in phase_5
+    baseline_results = run_all_baselines(X_train, y_train, X_val, X_test, cfg)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\src\baselines.py", line 151, in run_all_baselines
+    results[model_name] = train_and_predict(model_name, X_train, y_train, X_val, X_test, cfg)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\src\baselines.py", line 91, in train_and_predict
+    model.fit(X_train_clean, y_train)
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\base.py", line 1403, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\linear_model\_logistic.py", line 1437, in fit
+    X, y = validate_data(
+           ^^^^^^^^^^^^^^
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\validation.py", line 3058, in validate_data
+    X, y = check_X_y(X, y, **check_params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\validation.py", line 1330, in check_X_y
+    X = check_array(
+        ^^^^^^^^^^^^
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\validation.py", line 1090, in check_array
+    _assert_all_finite(
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\validation.py", line 137, in _assert_all_finite
+    _assert_all_finite_element_wise(
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\validation.py", line 186, in _assert_all_finite_element_wise
+    raise ValueError(msg_err)
+ValueError: Input X contains infinity or a value too large for dtype('float64').
+2026-10-09 02:08:30,252  INFO      main — Continuing to next phase …
+2026-10-09 02:08:30,252  INFO      phase6 — ============================================================
+2026-10-09 02:08:30,252  INFO      phase6 — PHASE 6 — Temporal Model (LSTM/GRU)
+2026-10-09 02:08:30,252  INFO      phase6 — ============================================================
+2026-10-09 02:08:32,726  INFO      src.temporal_model — Starting temporal model training pipeline...
+2026-10-09 02:08:32,726  INFO      src.temporal_model — Using device: cpu
+2026-10-09 02:08:32,731  INFO      src.temporal_model — Using pos_weight for BCEWithLogitsLoss: 261.5000
+2026-10-09 02:08:34,229  INFO      src.temporal_model — Starting training for up to 50 epochs...
+2026-10-09 02:08:34,553  INFO      src.temporal_model — Epoch 1/50 - Train Loss: nan - Val Loss: nan
+2026-10-09 02:08:34,881  INFO      src.temporal_model — Epoch 2/50 - Train Loss: nan - Val Loss: nan
+2026-10-09 02:08:35,221  INFO      src.temporal_model — Epoch 3/50 - Train Loss: nan - Val Loss: nan
+2026-10-09 02:08:35,547  INFO      src.temporal_model — Epoch 4/50 - Train Loss: nan - Val Loss: nan
+2026-10-09 02:08:35,867  INFO      src.temporal_model — Epoch 5/50 - Train Loss: nan - Val Loss: nan
+2026-10-09 02:08:36,222  INFO      src.temporal_model — Epoch 6/50 - Train Loss: nan - Val Loss: nan
+2026-10-09 02:08:36,567  INFO      src.temporal_model — Epoch 7/50 - Train Loss: nan - Val Loss: nan
+2026-10-09 02:08:36,567  INFO      src.temporal_model — Early stopping triggered after 7 epochs.
+2026-10-09 02:08:36,568  INFO      src.temporal_model — Generating predictions for validation and test sets...
+2026-10-09 02:08:36,615  INFO      src.temporal_model — Pipeline completed. Val predictions shape: (306,), Test predictions shape: (311,)
+2026-10-09 02:08:36,615  INFO      phase6 — Temporal model training complete.
+2026-10-09 02:08:36,615  INFO      phase7 — ============================================================
+2026-10-09 02:08:36,615  INFO      phase7 — PHASE 7 — ETASE Framework
+2026-10-09 02:08:36,615  INFO      phase7 — ============================================================
+2026-10-09 02:08:36,631  ERROR     phase7 — ETASE failed: name 'FEATURE_REGISTRY' is assigned to before global declaration (etase.py, line 379)
+Traceback (most recent call last):
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 266, in phase_7
+    from src.etase import run_etase
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\src\etase.py", line 379
+    global FEATURE_REGISTRY
+    ^^^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: name 'FEATURE_REGISTRY' is assigned to before global declaration
+2026-10-09 02:08:36,631  INFO      phase8 — ============================================================
+2026-10-09 02:08:36,632  INFO      phase8 — PHASE 8 — Evaluation
+2026-10-09 02:08:36,632  INFO      phase8 — ============================================================
+2026-10-09 02:08:36,633  INFO      src.evaluation — Evaluating model: temporal_lstm
+2026-10-09 02:08:36,774  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-09 02:08:36,774  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-09 02:08:36,774  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-09 02:08:36,781  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-09 02:08:36,784  INFO      src.evaluation —   temporal_lstm — F1=0.0000  PR-AUC=nan  ROC-AUC=nan  LeadTime=nan min
+2026-10-09 02:08:36,786  INFO      src.evaluation — Evaluation summary saved to results\model_comparison.csv
+2026-10-09 02:08:36,789  INFO      phase8 — Evaluation results:
+ precision  recall  f1  pr_auc  roc_auc  false_alarm_rate  detection_rate  accuracy  threshold  tp  fp  tn  fn         model  mean_lead_time_min  median_lead_time_min  n_true_positives  lead_time_available
+       0.0     0.0 0.0     NaN      NaN               0.0             0.0       1.0        0.5   0   0 311   0 temporal_lstm                 NaN                   NaN                 0                False
+2026-10-09 02:08:36,790  INFO      phase8 — Phase 8 complete.
+2026-10-09 02:08:36,790  INFO      phase9 — ============================================================
+2026-10-09 02:08:36,790  INFO      phase9 — PHASE 9 — Ablation Study
+2026-10-09 02:08:36,790  INFO      phase9 — ============================================================
+2026-10-09 02:08:36,800  INFO      src.ablation — Ablation study using XGBoost
+2026-10-09 02:08:36,800  INFO      src.ablation — --- Ablation: market_only  groups=['price', 'volume', 'volatility', 'price_volume'] ---
+2026-10-09 02:08:36,801  INFO      src.ablation —   Using 38 features: ['pct_return', 'log_return', 'price_change', 'rolling_return_5', 'rolling_return_10']
+2026-10-09 02:08:36,837  ERROR     main — Phase 9 failed: [02:08:36] C:\actions-runner\_work\xgboost\xgboost\src\data\gradient_index.h:99: Check failed: valid: Input data contains `inf` or a value too large, while `missing` is not set to `inf`
+Traceback (most recent call last):
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 411, in main
+    PHASES[phase_num](cfg, state)
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 320, in phase_9
+    ablation_df = run_ablation(
+                  ^^^^^^^^^^^^^
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\src\ablation.py", line 165, in run_ablation
+    model.fit(Xtr, y_train)
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\xgboost\core.py", line 569, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\xgboost\sklearn.py", line 1838, in fit
+    train_dmatrix, evals = _wrap_evaluation_matrices(
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\xgboost\sklearn.py", line 766, in _wrap_evaluation_matrices
+    train_dmatrix = create_dmatrix(
+                    ^^^^^^^^^^^^^^^
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\xgboost\sklearn.py", line 1319, in _create_dmatrix
+    return QuantileDMatrix(
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\xgboost\core.py", line 569, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\xgboost\core.py", line 1556, in __init__
+    self._init(
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\xgboost\core.py", line 1617, in _init
+    _check_call(ret)
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\xgboost\_c_api.py", line 190, in _check_call
+    raise XGBoostError(py_str(_LIB.XGBGetLastError()))
+xgboost._c_api.XGBoostError: [02:08:36] C:\actions-runner\_work\xgboost\xgboost\src\data\gradient_index.h:99: Check failed: valid: Input data contains `inf` or a value too large, while `missing` is not set to `inf`
+2026-10-09 02:08:36,841  INFO      main — Continuing to next phase …
+2026-10-09 02:08:36,841  INFO      phase10 — ============================================================
+2026-10-09 02:08:36,842  INFO      phase10 — PHASE 10 — Visualization
+2026-10-09 02:08:36,842  INFO      phase10 — ============================================================
+2026-10-09 02:08:37,349  INFO      src.visualization — Generating plots …
+2026-10-09 02:08:38,160  ERROR     main — Phase 10 failed: [Errno 2] No such file or directory: 'results\\price_volume_APPC\\BTC.png'
+Traceback (most recent call last):
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 411, in main
+    PHASES[phase_num](cfg, state)
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 348, in phase_10
+    generate_all_plots(
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\src\visualization.py", line 376, in generate_all_plots
+    plot_price_volume(df, symbol, output_dir)
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\src\visualization.py", line 76, in plot_price_volume
+    _save(fig, Path(output_dir) / f"price_volume_{symbol}.png")
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\src\visualization.py", line 43, in _save
+    fig.savefig(path, dpi=DPI, bbox_inches="tight")
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\matplotlib\figure.py", line 3515, in savefig
+    self.canvas.print_figure(fname, **kwargs)
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\matplotlib\backend_bases.py", line 2289, in print_figure
+    result = print_method(
+             ^^^^^^^^^^^^^
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\matplotlib\backend_bases.py", line 2146, in <lambda>
+    print_method = functools.wraps(meth)(lambda *args, **kwargs: meth(
+                                                                 ^^^^^
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\matplotlib\backends\backend_agg.py", line 537, in print_png
+    self._print_pil(filename_or_obj, "png", pil_kwargs, metadata)
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\matplotlib\backends\backend_agg.py", line 486, in _print_pil
+    mpl.image.imsave(
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\matplotlib\image.py", line 1729, in imsave
+    image.save(fname, **pil_kwargs)
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\PIL\Image.py", line 2706, in save
+    fp = builtins.open(filename, "w+b")
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'results\\price_volume_APPC\\BTC.png'
+2026-10-09 02:08:38,188  INFO      main — Continuing to next phase …
+2026-10-09 02:08:38,189  INFO      main — ============================================================
+2026-10-09 02:08:38,190  INFO      main — Pipeline finished.
+2026-10-09 02:08:38,190  INFO      main — ============================================================
+2026-10-09 02:10:03,815  INFO      main — ============================================================
+2026-10-09 02:10:03,815  INFO      main — Crypto Pump-and-Dump Early Detection Pipeline
+2026-10-09 02:10:03,815  INFO      main — ============================================================
+2026-10-09 02:10:03,815  INFO      main — Config : config.yaml
+2026-10-09 02:10:03,815  INFO      main — Phase  : ALL
+2026-10-09 02:10:03,823  INFO      src.data_loader — Configuration loaded from C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\config.yaml
+2026-10-09 02:10:03,823  INFO      phase1 — ============================================================
+2026-10-09 02:10:03,823  INFO      phase1 — PHASE 1 — Data Loading & Validation
+2026-10-09 02:10:03,823  INFO      phase1 — ============================================================
+2026-10-09 02:10:03,823  INFO      src.data_loader — Loading OHLCV data from data\raw\ohlcv.csv …
+2026-10-09 02:10:03,846  INFO      src.data_loader — Loading pump-event labels from data\labels\pump_events.csv …
+2026-10-09 02:10:03,864  WARNING   src.data_loader — Pump-label file contains symbols not found in OHLCV data: {'LEV/USDT', 'GRS/BTC', 'HONOR/BTC', 'CC/BTC', 'NBT/BTC', 'MET/BTC', 'NKN/USDT', 'IDEX/BTC', 'TKS/BTC', 'VC/USDT', 'TAJ/BTC', 'NXC/BTC', 'LIBFX/USDT', 'FXS/BTC', 'ATM/BTC', 'EXCL/BTC', 'ELF/BTC', 'DGD/BTC', 'HYFIT/USDT', 'DGCL/BTC', 'MBRS/BTC', 'TUBER/USDT', 'CNNC/BTC', 'SNT/BTC', 'UBT/BTC', 'MODEFI/USDT', 'CHESS/BTC', 'MLN/BTC', 'BXH/USDT', 'DISTX/USDT', 'QLC/BTC', 'SBEAR/USDT', 'BLN/BTC', 'IOC/BTC', 'TCT/BTC', 'AZK/BTC', 'BBT/BTC', 'CRACK/BTC', 'SIG/BTC', 'XRE/BTC', 'STEEM/BTC', 'POFI/USDT', 'ZEN/BTC', 'GAS/BTC', 'AST/BTC', 'ADT/BTC', 'REN/BTC', 'EZ/BTC', 'ARGUS/BTC', 'XCO/BTC', 'MNZ/BTC', 'BVB/BTC', 'FLY/USDT', 'EUC/BTC', 'PNT/BTC', 'YOVI/BTC', 'DS/USDT', 'EMC2/BTC', 'QBT/BTC', 'BRK/BTC', 'ETL/BTC', 'OXY/BTC', 'FCD/BTC', 'BOLI/BTC', 'VIBE/BTC', 'BSL/USDT', 'BERN/BTC', 'NAV/BTC', 'XZC/BTC', 'FLAX/BTC', 'ZER/BTC', 'XRL/BTC', 'FIRE/BTC', 'SKY/BTC', 'CURE/BTC', 'GRN/BTC', 'STY/BTC', 'NEVA/BTC', 'TNT/BTC', 'NETKO/BTC', 'TB/BTC', 'ERY/BTC', 'GELD/BTC', 'ICX/USDT', 'KING/BTC', 'UBQ/BTC', 'BTCST/BTC', 'CXT/BTC', 'PAX/BTC', 'DEP/USDT', 'WW/BTC', 'XTK/USDT', 'SOUL/BTC', 'Q2C/BTC', 'BCD/BTC', 'ARK/BTC', 'IQT/BTC', 'UNIC/BTC', 'DALC/BTC', 'AXIAV3/USDT', 'SEL/BTC', 'CHAT/BTC', 'CHSB/BTC', 'ECOB/BTC', 'BUBO/BTC', 'GNT/BTC', 'DOX/BTC', 'GO/BTC', 'SPR/BTC', 'ZSE/BTC', 'GTEA/BTC', 'TORQ/BTC', 'XXX/BTC', 'VITE/BTC', 'BNC/BTC', 'BTZ/BTC', 'EDC/BTC', 'FLM/BTC', 'CAP/BTC', 'MTH/USDT', 'ELM/BTC', 'CLR/BTC', 'HDG/BTC', 'DORA/USDT', 'STORJ/USDT', 'MATIC/BTC', 'TX/BTC', 'TDS/BTC', 'ITEN/USDT', 'VVI/BTC', 'GUA/BTC', 'WABI/BTC', 'COINV/BTC', 'ONG/BTC', 'BSTY/BTC', 'VERI/BTC', 'BNBX/BTC', 'DOGE/BTC', 'BOX/BTC', 'ETT/BTC', 'MARS/BTC', 'VIB/BTC', 'SBIT/BTC', 'CGG/USDT', 'NLG/BTC', 'BUM/BTC', 'SPACE/BTC', 'SUP/BTC', 'ICN/BTC', 'EFL/BTC', 'KAT/BTC', 'BEEZ/BTC', 'FC/BTC', 'QSP/BTC', 'TIME/BTC', 'STPT/BTC', 'FIO/BTC', 'GNO/BTC', 'BTSY/BTC', 'DOVE/USDT', 'TUSD/BTC', 'TSL/USDT', 'AKRO/USDT', 'WRX/BTC', 'CNO/BTC', 'NET/BTC', 'PASL/BTC', 'POWR/BTC', 'ASCS/BTC', 'DAS/BTC', 'VIA/BTC', 'DBXC/USDT', 'FUN/BTC', 'ZNY/BTC', 'BAS/USDT', 'CAN/BTC', 'OPCX/BTC', 'HALV/USDT', 'REV/BTC', 'POE/BTC', 'C20/BTC', 'LOOM/BTC', 'TIX/BTC', 'SPHR/BTC', 'LSK/BTC', 'MTH/BTC', 'GSY/BTC', 'OMNI/BTC', 'PPT/BTC', 'SNM/BTC', 'VRC/BTC', 'BTS/BTC', 'BIP/BTC', 'SLS/BTC', 'XBP/BTC', 'CFX/BTC', 'BZRX/BTC', 'EGC/BTC', 'EMP/BTC', 'PCOIN/BTC', 'CREAM/USDT', 'SMC/BTC', 'SPT/BTC', 'COAL/BTC', 'WNXM/BTC', 'LDM/BTC', 'MMDA/USDT', 'TOP/BTC', 'XID/BTC', 'RNS/BTC', 'HC/BTC', 'AUR/BTC', 'RCN/BTC', 'TIE/BTC', 'IVY/BTC', 'SEQ/BTC', 'BLZ/BTC', 'SYS/BTC', 'BSC/USDT', 'YOYO/BTC', 'STND/BTC', 'LINK/BTC', 'DCRE/BTC', 'NULS/BTC', 'BDL/BTC', 'BRX/BTC', 'PTI/USDT', 'MANIA/BTC', 'SNX/BTC', 'FAIR/BTC', 'ETI/USDT', 'PIVX/BTC', 'BLOCK/BTC', 'ATH/BTC', 'BCPT/BTC', 'DARK/BTC', 'EVO/BTC', 'ACOIN/BTC', 'SHRF/BTC', 'DVPN/USDT', 'SOON/BTC', 'FRN/BTC', 'FANS/BTC', 'AV/BTC', 'ACM/BTC', 'GOD/USDT', '8BIT/BTC', 'GBG/BTC', 'AGRS/BTC', 'HAC/BTC', 'CROC/BTC', 'MNE/BTC', 'OTN/BTC', 'UKG/BTC', 'NAS/BTC', 'DTB/BTC', 'RYA/BTC', 'PARTY/BTC', 'SIB/BTC', 'NXS/BTC', 'SKIN/BTC', 'BYC/BTC', 'ABT/BTC', 'SWM/BTC', 'SWP/USDT', 'RYTK/BTC', 'REA/BTC', 'BCC/BTC', 'PEOS/USDT', 'BLZ/USDT', 'ENRG/BTC', 'THC/BTC', 'STV/BTC', 'PAL/BTC', 'NBOT/USDT', 'QTL/BTC', 'FUEL/BTC', 'UTC/BTC', 'CFT/BTC', 'XAUR/BTC', 'DZC/BTC', 'YOYOW/BTC', 'DATA/BTC', 'VERS/BTC', 'BONDED/USDT', 'XZX/BTC', 'GXS/BTC', 'STOX/USDT', 'SYNX/BTC', 'REQ/BTC', 'BSC/BTC', 'GDM/USDT', 'IOTX/BTC', 'GPL/BTC', 'DADI/BTC', 'SAK/BTC', 'TRK/BTC', 'INJ/USDT', 'BELT/USDT', 'EET/BTC', 'ASN/BTC', 'BAT/BTC', 'ADX/BTC', 'INK/USDT', 'MXC/USDT', 'CTIC3/BTC', 'TKN/BTC', 'GRC/BTC', 'PLC/BTC', 'FUZZ/BTC', 'SRN/BTC', 'R/BTC', 'LEMON/BTC', 'LEND/BTC', 'BTF/USDT', 'DUO/USDT', 'EIDOS/USDT', 'OAX/BTC', 'STAR/BTC', 'BRD/BTC', 'SDC/BTC', 'IRL/BTC', 'NEBL/BTC', 'PPC/BTC', 'EQT/BTC', 'ENJ/BTC', 'WTC/BTC', 'CGEN/BTC', 'GVT/BTC', 'DRXNE/BTC', 'TFF/USDT', 'DCT/BTC', 'OCEAN/BTC', 'LRC/BTC', 'MOJO/BTC', 'PAMP/USDT', 'SKR/BTC', 'SASHIMI/BTC', 'XST/BTC', 'SCL/BTC', 'REP/BTC', 'ELC/BTC', 'INFX/BTC', 'EBG/BTC', 'BTCD/BTC', 'XDEX/USDT', 'SOIL/BTC', 'ING/BTC', 'CND/BTC', 'FLDC/BTC', 'MGO/BTC', 'PIE/BTC', 'GHD/BTC', 'MAGE/BTC', 'MAY/BTC', 'M1/BTC', 'QOB/USDT', 'BBEL/BTC', 'MITH/BTC', 'GSY/ETH', 'SAMK/USDT', 'STORM/BTC', 'DAI/BTC', 'MDA/BTC', 'RIYA/BTC', 'CREA/BTC', 'LUN/BTC', 'GET/BTC', 'GREENF/BTC', 'INS/BTC', 'UFR/BTC', 'FC2/BTC', 'HQX/BTC', 'ESC/USDT', 'POLY/BTC', 'FBN/USDT', 'UFO/USDT', 'ULU/USDT', 'SRNT/BTC', 'MORE/BTC', 'KEEP/USDT', 'AMA/USDT', 'RLC/BTC', 'CDT/BTC', 'GAM/BTC', 'AMB/BTC', 'SUP/USDT', 'XPTX/BTC', 'EDO/BTC', 'AMM/BTC', 'HTDF/USDT', 'MATRX/BTC', 'GTO/BTC', 'OSC/BTC', 'ARN/BTC', 'UMO/BTC', 'XGM/USDT', 'ORC/USDT', 'XPRO/BTC', 'CQST/BTC', 'DODO/USDT', 'KALM/USDT', 'THETA/BTC', 'XMG/BTC', 'SDT/USDT', 'DNT/BTC', 'FDS/USDT', 'SUSD/BTC', 'REAP/USDT', 'BEST/BTC', 'BQT/USDT', 'MYST/BTC', 'SEV/BTC', 'CLOAK/BTC', 'INPAY/BTC', 'IXT/BTC', 'STORJ/BTC', 'TON/USDT', 'BTS/USDT', 'SNPT/BTC', 'SNGLS/BTC', 'IQN/BTC', 'TNB/BTC', 'AOA/BTC', 'POA/BTC', 'GNR/BTC', 'LDC/BTC', 'OPAL/BTC', 'RNT/USDT', 'ALIS/BTC', 'BASIC/USDT', 'WOM/USDT', 'SLR/BTC', 'TFD/BTC', 'NWC/BTC', 'PINK/BTC', 'CTXC/BTC', 'IND/BTC', 'UNIC/USDT', 'ORB/BTC', 'RBT/BTC', 'AUV/USDT', 'WPR/BTC', 'PDC/BTC', 'STEEL/USDT', 'BQT/BTC', 'JST/USDT', 'AEON/BTC', 'DUSK/BTC', 'HGR/BTC', 'SOP/USDT', 'GRT/BTC', 'WSP/BTC', 'SLING/BTC', 'QQQ/USDT', 'PHB/BTC', 'CL/BTC', 'FT/BTC', 'ORC/BTC', 'SUB/BTC', 'SAN/BTC', 'AAC/USDT', 'ENJ/USDT', 'PLR/BTC', 'GEO/BTC', 'HAUS/BTC', 'FTM/BTC', 'UNITS/BTC', 'DRPU/BTC', 'UNB/BTC', 'ARDR/BTC', 'AEROX/USDT', 'BUSY/BTC', 'DCNT/USDT', 'WINGS/BTC', 'TES/BTC', '611/BTC', 'BNW/USDT', 'NYAN/BTC', 'BLITZ/BTC', 'DGB/BTC', 'CON/BTC', 'RETRY/USDT', 'BON/BTC', 'BDO/USDT', 'GUM/BTC', 'CVC/BTC', 'ERC/BTC', 'MBONK/BTC', 'CWV/USDT', 'SCRT/BTC', 'ALL/BTC', 'KMD/BTC', 'CRUMB/BTC', 'GUN/BTC', 'MASH/USDT', 'CRPT/BTC', 'FBS/USDT', 'GENS/USDT', 'VEC/BTC', 'MNSTP/USDT', 'RDN/BTC', 'DKA/BTC', 'MOD/BTC', 'OST/BTC', 'SBD/BTC', 'AE/BTC', 'ARI/BTC', 'SNRG/BTC', 'BQX/BTC', 'AUTO/BTC', 'CLAM/BTC', 'PAI/BTC', 'CEXLT/USDT', 'QKC/BTC', 'OAS/BTC', 'EVX/BTC', 'PTC/BTC', 'CHR/USDT', 'U/BTC', 'HAL/BTC', 'DLT/BTC', 'DRACO/BTC', 'SWT/BTC', 'KNC/BTC', 'ONT/BTC', 'DVI/USDT', 'GRW/BTC', 'CS/USDT', 'EMT/BTC', 'MCT/BTC', 'MANA/BTC', 'MNM/BTC', 'ETHOS/BTC', 'KRONE/BTC', 'CHRG/BTC', 'WHL/BTC', 'ABC/BTC', 'OK/BTC', 'DREP/BTC', 'PRO/BTC', 'NAX/BTC', 'LVG/BTC', 'BCS/BTC', 'NMR/BTC'}. These labels will be ignored during labeling.
+2026-10-09 02:10:03,865  INFO      phase1 — OHLCV  : 2500 rows, 5 symbols
+2026-10-09 02:10:03,865  INFO      phase1 — Labels : 2445 pump events
+2026-10-09 02:10:03,865  INFO      phase1 — Phase 1 complete.
+2026-10-09 02:10:03,866  INFO      phase2 — ============================================================
+2026-10-09 02:10:03,866  INFO      phase2 — PHASE 2 — Preprocessing & Labeling
+2026-10-09 02:10:03,866  INFO      phase2 — ============================================================
+2026-10-09 02:10:03,866  INFO      src.preprocessing — Preprocessing OHLCV data (2500 rows) …
+2026-10-09 02:10:03,876  INFO      src.preprocessing —   APPC/BTC — detected frequency: 0 days 00:05:00
+2026-10-09 02:10:03,877  INFO      src.preprocessing —   BNT/BTC — detected frequency: 0 days 00:05:00
+2026-10-09 02:10:03,879  INFO      src.preprocessing —   BTC/USDT — detected frequency: 0 days 00:05:00
+2026-10-09 02:10:03,880  INFO      src.preprocessing —   ETH/USDT — detected frequency: 0 days 00:05:00
+2026-10-09 02:10:03,881  INFO      src.preprocessing —   STMX/USDT — detected frequency: 0 days 00:05:00
+2026-10-09 02:10:03,881  INFO      src.preprocessing — Preprocessing complete: 2500 rows remain.
+2026-10-09 02:10:03,882  INFO      src.labeling — Creating binary labels with prediction horizon = 30 minutes …
+2026-10-09 02:10:03,899  INFO      src.labeling — Labeling complete: 2500 total, 6 positive (0.24%), 2494 negative
+2026-10-09 02:10:03,903  INFO      phase2 — Label distribution:
+   symbol  total  positive  negative  pct_positive
+ APPC/BTC    500         0       500           0.0
+  BNT/BTC    500         0       500           0.0
+ BTC/USDT    500         0       500           0.0
+ ETH/USDT    500         0       500           0.0
+STMX/USDT    500         6       494           1.2
+2026-10-09 02:10:03,906  INFO      phase2 — Phase 2 complete.
+2026-10-09 02:10:03,906  INFO      phase3 — ============================================================
+2026-10-09 02:10:03,906  INFO      phase3 — PHASE 3 — Feature Engineering
+2026-10-09 02:10:03,906  INFO      phase3 — ============================================================
+2026-10-09 02:10:03,906  INFO      src.features — Engineering features (rolling windows=[5, 10, 20, 50]) …
+2026-10-09 02:10:04,009  INFO      src.features — Feature engineering complete: 50 feature columns across 6 groups.
+2026-10-09 02:10:04,009  INFO      src.features —   price          : 13 features
+2026-10-09 02:10:04,010  INFO      src.features —   volume         : 11 features
+2026-10-09 02:10:04,010  INFO      src.features —   volatility     : 8 features
+2026-10-09 02:10:04,010  INFO      src.features —   momentum       : 5 features
+2026-10-09 02:10:04,010  INFO      src.features —   time           : 7 features
+2026-10-09 02:10:04,010  INFO      src.features —   price_volume   : 6 features
+2026-10-09 02:10:04,013  INFO      phase3 — Dropped 250 rows with NaN features (from rolling windows).
+2026-10-09 02:10:04,122  INFO      phase3 — Featured data saved (2250 rows, 59 cols).
+2026-10-09 02:10:04,122  INFO      phase3 — Phase 3 complete.
+2026-10-09 02:10:04,122  INFO      phase4 — ============================================================
+2026-10-09 02:10:04,122  INFO      phase4 — PHASE 4 — Chronological Split
+2026-10-09 02:10:04,122  INFO      phase4 — ============================================================
+2026-10-09 02:10:04,136  INFO      src.split — Chronological split complete:
+2026-10-09 02:10:04,136  INFO      src.split —   Train : 1575 rows (70.0%)
+2026-10-09 02:10:04,136  INFO      src.split —   Val   : 335 rows (14.9%)
+2026-10-09 02:10:04,136  INFO      src.split —   Test  : 340 rows (15.1%)
+2026-10-09 02:10:04,143  INFO      phase4 — Split summary:
+split  rows  positive  negative  pct_positive                start_time                  end_time
+train  1575         6      1569         0.381 2021-06-14 04:10:00+00:00 2021-06-15 06:20:00+00:00
+  val   335         0       335         0.000 2021-06-15 06:25:00+00:00 2021-06-15 11:55:00+00:00
+ test   340         0       340         0.000 2021-06-15 12:00:00+00:00 2021-06-15 17:35:00+00:00
+2026-10-09 02:10:04,145  INFO      src.split — Split summary saved to results\split_summary.csv
+2026-10-09 02:10:04,145  INFO      phase4 — Phase 4 complete.
+2026-10-09 02:10:04,145  INFO      phase5 — ============================================================
+2026-10-09 02:10:04,145  INFO      phase5 — PHASE 5 — Baseline Models
+2026-10-09 02:10:04,145  INFO      phase5 — ============================================================
+2026-10-09 02:10:04,287  INFO      src.baselines — Training model: rule_based
+2026-10-09 02:10:04,288  WARNING   src.baselines — NaN or inf values found in features. Filling with 0.
+2026-10-09 02:10:04,296  INFO      src.baselines — Model rule_based saved to models\rule_based_model.joblib
+2026-10-09 02:10:04,299  INFO      src.baselines — Training model: logistic_regression
+2026-10-09 02:10:04,299  WARNING   src.baselines — NaN or inf values found in features. Filling with 0.
+2026-10-09 02:10:04,575  INFO      src.baselines — Model logistic_regression saved to models\logistic_regression_model.joblib
+2026-10-09 02:10:04,578  INFO      src.baselines — Training model: random_forest
+2026-10-09 02:10:04,579  WARNING   src.baselines — NaN or inf values found in features. Filling with 0.
+2026-10-09 02:10:05,079  INFO      src.baselines — Model random_forest saved to models\random_forest_model.joblib
+2026-10-09 02:10:05,117  INFO      src.baselines — Training model: xgboost
+2026-10-09 02:10:05,118  WARNING   src.baselines — NaN or inf values found in features. Filling with 0.
+2026-10-09 02:10:05,349  INFO      src.baselines — Model xgboost saved to models\xgboost_model.joblib
+2026-10-09 02:10:05,362  INFO      src.anomaly_detection — Training Isolation Forest...
+2026-10-09 02:10:05,364  WARNING   src.anomaly_detection — NaN or inf values found in features. Filling with 0.
+2026-10-09 02:10:05,685  INFO      src.anomaly_detection — Isolation Forest model saved to models\isolation_forest_model.joblib
+2026-10-09 02:10:05,716  INFO      phase5 — Phase 5 complete — 5 models trained.
+2026-10-09 02:10:05,717  INFO      phase6 — ============================================================
+2026-10-09 02:10:05,717  INFO      phase6 — PHASE 6 — Temporal Model (LSTM/GRU)
+2026-10-09 02:10:05,717  INFO      phase6 — ============================================================
+2026-10-09 02:10:07,382  INFO      src.temporal_model — Starting temporal model training pipeline...
+2026-10-09 02:10:07,383  INFO      src.temporal_model — Using device: cpu
+2026-10-09 02:10:07,387  INFO      src.temporal_model — Using pos_weight for BCEWithLogitsLoss: 261.5000
+2026-10-09 02:10:08,694  INFO      src.temporal_model — Starting training for up to 50 epochs...
+2026-10-09 02:10:08,954  INFO      src.temporal_model — Epoch 1/50 - Train Loss: nan - Val Loss: nan
+2026-10-09 02:10:09,198  INFO      src.temporal_model — Epoch 2/50 - Train Loss: nan - Val Loss: nan
+2026-10-09 02:10:09,445  INFO      src.temporal_model — Epoch 3/50 - Train Loss: nan - Val Loss: nan
+2026-10-09 02:10:09,738  INFO      src.temporal_model — Epoch 4/50 - Train Loss: nan - Val Loss: nan
+2026-10-09 02:10:09,990  INFO      src.temporal_model — Epoch 5/50 - Train Loss: nan - Val Loss: nan
+2026-10-09 02:10:10,243  INFO      src.temporal_model — Epoch 6/50 - Train Loss: nan - Val Loss: nan
+2026-10-09 02:10:10,544  INFO      src.temporal_model — Epoch 7/50 - Train Loss: nan - Val Loss: nan
+2026-10-09 02:10:10,545  INFO      src.temporal_model — Early stopping triggered after 7 epochs.
+2026-10-09 02:10:10,545  INFO      src.temporal_model — Generating predictions for validation and test sets...
+2026-10-09 02:10:10,576  INFO      src.temporal_model — Pipeline completed. Val predictions shape: (306,), Test predictions shape: (311,)
+2026-10-09 02:10:10,577  INFO      phase6 — Temporal model training complete.
+2026-10-09 02:10:10,577  INFO      phase7 — ============================================================
+2026-10-09 02:10:10,577  INFO      phase7 — PHASE 7 — ETASE Framework
+2026-10-09 02:10:10,577  INFO      phase7 — ============================================================
+2026-10-09 02:10:10,588  ERROR     phase7 — ETASE failed: name 'FEATURE_REGISTRY' is assigned to before global declaration (etase.py, line 379)
+Traceback (most recent call last):
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 266, in phase_7
+    from src.etase import run_etase
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\src\etase.py", line 379
+    global FEATURE_REGISTRY
+    ^^^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: name 'FEATURE_REGISTRY' is assigned to before global declaration
+2026-10-09 02:10:10,588  INFO      phase8 — ============================================================
+2026-10-09 02:10:10,589  INFO      phase8 — PHASE 8 — Evaluation
+2026-10-09 02:10:10,589  INFO      phase8 — ============================================================
+2026-10-09 02:10:10,590  INFO      src.evaluation — Evaluating model: rule_based
+2026-10-09 02:10:10,680  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-09 02:10:10,680  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-09 02:10:10,680  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-09 02:10:10,689  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-09 02:10:10,692  INFO      src.evaluation —   rule_based — F1=0.0000  PR-AUC=nan  ROC-AUC=nan  LeadTime=nan min
+2026-10-09 02:10:10,692  INFO      src.evaluation — Evaluating model: logistic_regression
+2026-10-09 02:10:10,790  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-09 02:10:10,791  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-09 02:10:10,791  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-09 02:10:10,798  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-09 02:10:10,800  INFO      src.evaluation —   logistic_regression — F1=0.0000  PR-AUC=nan  ROC-AUC=nan  LeadTime=nan min
+2026-10-09 02:10:10,800  INFO      src.evaluation — Evaluating model: random_forest
+2026-10-09 02:10:10,868  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-09 02:10:10,869  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-09 02:10:10,869  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-09 02:10:10,875  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-09 02:10:10,878  INFO      src.evaluation —   random_forest — F1=0.0000  PR-AUC=nan  ROC-AUC=nan  LeadTime=nan min
+2026-10-09 02:10:10,878  INFO      src.evaluation — Evaluating model: xgboost
+2026-10-09 02:10:10,951  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-09 02:10:10,951  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-09 02:10:10,952  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-09 02:10:10,958  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-09 02:10:10,959  INFO      src.evaluation —   xgboost — F1=0.0000  PR-AUC=nan  ROC-AUC=nan  LeadTime=nan min
+2026-10-09 02:10:10,959  INFO      src.evaluation — Evaluating model: isolation_forest
+2026-10-09 02:10:11,038  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-09 02:10:11,039  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-09 02:10:11,039  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-09 02:10:11,045  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-09 02:10:11,047  INFO      src.evaluation —   isolation_forest — F1=0.0000  PR-AUC=nan  ROC-AUC=nan  LeadTime=nan min
+2026-10-09 02:10:11,047  INFO      src.evaluation — Evaluating model: temporal_lstm
+2026-10-09 02:10:11,116  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-09 02:10:11,117  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-09 02:10:11,117  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-09 02:10:11,123  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-09 02:10:11,124  INFO      src.evaluation —   temporal_lstm — F1=0.0000  PR-AUC=nan  ROC-AUC=nan  LeadTime=nan min
+2026-10-09 02:10:11,126  INFO      src.evaluation — Evaluation summary saved to results\model_comparison.csv
+2026-10-09 02:10:11,129  INFO      phase8 — Evaluation results:
+ precision  recall  f1  pr_auc  roc_auc  false_alarm_rate  detection_rate  accuracy  threshold  tp  fp  tn  fn               model  mean_lead_time_min  median_lead_time_min  n_true_positives  lead_time_available
+       0.0     0.0 0.0     NaN      NaN          0.000000             0.0  1.000000        0.5   0   0 340   0          rule_based                 NaN                   NaN                 0                False
+       0.0     0.0 0.0     NaN      NaN          0.017647             0.0  0.982353        0.5   0   6 334   0 logistic_regression                 NaN                   NaN                 0                False
+       0.0     0.0 0.0     NaN      NaN          0.000000             0.0  1.000000        0.5   0   0 340   0       random_forest                 NaN                   NaN                 0                False
+       0.0     0.0 0.0     NaN      NaN          0.000000             0.0  1.000000        0.5   0   0 340   0             xgboost                 NaN                   NaN                 0                False
+       0.0     0.0 0.0     NaN      NaN          0.079412             0.0  0.920588        0.5   0  27 313   0    isolation_forest                 NaN                   NaN                 0                False
+       0.0     0.0 0.0     NaN      NaN          0.000000             0.0  1.000000        0.5   0   0 311   0       temporal_lstm                 NaN                   NaN                 0                False
+2026-10-09 02:10:11,129  INFO      phase8 — Phase 8 complete.
+2026-10-09 02:10:11,129  INFO      phase9 — ============================================================
+2026-10-09 02:10:11,129  INFO      phase9 — PHASE 9 — Ablation Study
+2026-10-09 02:10:11,129  INFO      phase9 — ============================================================
+2026-10-09 02:10:11,136  INFO      src.ablation — Ablation study using XGBoost
+2026-10-09 02:10:11,137  INFO      src.ablation — --- Ablation: market_only  groups=['price', 'volume', 'volatility', 'price_volume'] ---
+2026-10-09 02:10:11,137  INFO      src.ablation —   Using 38 features: ['pct_return', 'log_return', 'price_change', 'rolling_return_5', 'rolling_return_10']
+2026-10-09 02:10:11,431  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-09 02:10:11,431  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-09 02:10:11,431  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-09 02:10:11,440  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-09 02:10:11,440  INFO      src.ablation —   market_only — F1=0.0000  PR-AUC=nan  ROC-AUC=nan
+2026-10-09 02:10:11,440  INFO      src.ablation — --- Ablation: temporal_only  groups=['time', 'momentum'] ---
+2026-10-09 02:10:11,440  INFO      src.ablation —   Using 12 features: ['hour', 'minute', 'day_of_week', 'hour_sin', 'hour_cos']
+2026-10-09 02:10:11,680  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-09 02:10:11,680  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-09 02:10:11,680  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-09 02:10:11,687  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-09 02:10:11,687  INFO      src.ablation —   temporal_only — F1=0.0000  PR-AUC=nan  ROC-AUC=nan
+2026-10-09 02:10:11,687  INFO      src.ablation — --- Ablation: market_temporal  groups=['price', 'volume', 'volatility', 'price_volume', 'time', 'momentum'] ---
+2026-10-09 02:10:11,688  INFO      src.ablation —   Using 50 features: ['pct_return', 'log_return', 'price_change', 'rolling_return_5', 'rolling_return_10']
+2026-10-09 02:10:12,023  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-09 02:10:12,023  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-09 02:10:12,023  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-09 02:10:12,039  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-09 02:10:12,040  INFO      src.ablation —   market_temporal — F1=0.0000  PR-AUC=nan  ROC-AUC=nan
+2026-10-09 02:10:12,041  INFO      src.ablation — --- Ablation: market_temporal_context  groups=['price', 'volume', 'volatility', 'price_volume', 'time', 'momentum', 'context'] ---
+2026-10-09 02:10:12,041  INFO      src.ablation —   Experiment 'market_temporal_context' requires 'context' features which are NOT available in the current dataset. Marking as unavailable (not fabricating results).
+2026-10-09 02:10:12,060  INFO      src.ablation — Ablation results saved to results\ablation_results.csv
+2026-10-09 02:10:12,064  INFO      phase9 — Ablation results:
+             experiment                                                                   feature_groups  n_features  precision  recall  f1  pr_auc  roc_auc  false_alarm_rate  detection_rate  mean_lead_time_min  threshold  available                                                       note
+            market_only                                ['price', 'volume', 'volatility', 'price_volume']          38        0.0     0.0 0.0     NaN      NaN          0.000000             0.0                 NaN        0.5       True                                                           
+          temporal_only                                                             ['time', 'momentum']          12        0.0     0.0 0.0     NaN      NaN          0.002941             0.0                 NaN        0.5       True                                                           
+        market_temporal            ['price', 'volume', 'volatility', 'price_volume', 'time', 'momentum']          50        0.0     0.0 0.0     NaN      NaN          0.000000             0.0                 NaN        0.5       True                                                           
+market_temporal_context ['price', 'volume', 'volatility', 'price_volume', 'time', 'momentum', 'context']           0        NaN     NaN NaN     NaN      NaN               NaN             NaN                 NaN        NaN      False Context/channel features not available in current dataset.
+2026-10-09 02:10:12,065  INFO      phase9 — Phase 9 complete.
+2026-10-09 02:10:12,065  INFO      phase10 — ============================================================
+2026-10-09 02:10:12,065  INFO      phase10 — PHASE 10 — Visualization
+2026-10-09 02:10:12,065  INFO      phase10 — ============================================================
+2026-10-09 02:10:12,508  INFO      src.visualization — Generating plots …
+2026-10-09 02:10:13,279  INFO      src.visualization —   Saved plot: results\price_volume_APPC_BTC.png
+2026-10-09 02:10:13,521  INFO      src.visualization —   Saved plot: results\volume_zscore_APPC_BTC.png
+2026-10-09 02:10:13,817  INFO      src.visualization —   Saved plot: results\pump_events_APPC_BTC.png
+2026-10-09 02:10:14,430  INFO      src.visualization —   Saved plot: results\price_volume_BNT_BTC.png
+2026-10-09 02:10:14,682  INFO      src.visualization —   Saved plot: results\volume_zscore_BNT_BTC.png
+2026-10-09 02:10:15,022  INFO      src.visualization —   Saved plot: results\pump_events_BNT_BTC.png
+2026-10-09 02:10:15,622  INFO      src.visualization —   Saved plot: results\price_volume_BTC_USDT.png
+2026-10-09 02:10:15,854  INFO      src.visualization —   Saved plot: results\volume_zscore_BTC_USDT.png
+2026-10-09 02:10:16,131  INFO      src.visualization —   Saved plot: results\pump_events_BTC_USDT.png
+2026-10-09 02:10:16,937  INFO      src.visualization —   Saved plot: results\price_volume_ETH_USDT.png
+2026-10-09 02:10:17,176  INFO      src.visualization —   Saved plot: results\volume_zscore_ETH_USDT.png
+2026-10-09 02:10:17,411  INFO      src.visualization —   Saved plot: results\pump_events_ETH_USDT.png
+2026-10-09 02:10:18,014  INFO      src.visualization —   Saved plot: results\price_volume_STMX_USDT.png
+2026-10-09 02:10:18,254  INFO      src.visualization —   Saved plot: results\volume_zscore_STMX_USDT.png
+2026-10-09 02:10:18,489  INFO      src.visualization —   Saved plot: results\pump_events_STMX_USDT.png
+2026-10-09 02:10:18,668  INFO      src.visualization —   Saved plot: results\pred_probs_rule_based.png
+2026-10-09 02:10:18,814  INFO      src.visualization —   Saved plot: results\confusion_matrix_rule_based.png
+2026-10-09 02:10:19,016  INFO      src.visualization —   Saved plot: results\pred_probs_logistic_regression.png
+2026-10-09 02:10:19,172  INFO      src.visualization —   Saved plot: results\confusion_matrix_logistic_regression.png
+2026-10-09 02:10:19,347  INFO      src.visualization —   Saved plot: results\pred_probs_random_forest.png
+2026-10-09 02:10:19,497  INFO      src.visualization —   Saved plot: results\confusion_matrix_random_forest.png
+2026-10-09 02:10:19,691  INFO      src.visualization —   Saved plot: results\pred_probs_xgboost.png
+2026-10-09 02:10:19,834  INFO      src.visualization —   Saved plot: results\confusion_matrix_xgboost.png
+2026-10-09 02:10:20,037  INFO      src.visualization —   Saved plot: results\pred_probs_isolation_forest.png
+2026-10-09 02:10:20,193  INFO      src.visualization —   Saved plot: results\confusion_matrix_isolation_forest.png
+2026-10-09 02:10:20,394  INFO      src.visualization —   Saved plot: results\pred_probs_temporal_lstm.png
+2026-10-09 02:10:20,547  INFO      src.visualization —   Saved plot: results\confusion_matrix_temporal_lstm.png
+2026-10-09 02:10:20,560  ERROR     main — Phase 10 failed: Input contains NaN.
+Traceback (most recent call last):
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 411, in main
+    PHASES[phase_num](cfg, state)
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 348, in phase_10
+    generate_all_plots(
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\src\visualization.py", line 424, in generate_all_plots
+    plot_pr_curve(model_curves, output_dir)
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\src\visualization.py", line 196, in plot_pr_curve
+    prec, rec, _ = get_pr_curve_data(y_true, y_prob)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\src\evaluation.py", line 354, in get_pr_curve_data
+    return precision_recall_curve(y_true, y_prob)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_param_validation.py", line 218, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\metrics\_ranking.py", line 1161, in precision_recall_curve
+    _, fps, _, tps, thresholds = confusion_matrix_at_thresholds(
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\validation.py", line 80, in inner_f
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_param_validation.py", line 191, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\metrics\_ranking.py", line 1021, in confusion_matrix_at_thresholds
+    _sort_inputs_and_compute_classification_thresholds(
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\metrics\_ranking.py", line 896, in _sort_inputs_and_compute_classification_thresholds
+    assert_all_finite(y_score)
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\validation.py", line 227, in assert_all_finite
+    _assert_all_finite(
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\validation.py", line 137, in _assert_all_finite
+    _assert_all_finite_element_wise(
+  File "C:\Users\shrey\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\validation.py", line 186, in _assert_all_finite_element_wise
+    raise ValueError(msg_err)
+ValueError: Input contains NaN.
+2026-10-09 02:10:20,562  INFO      main — Continuing to next phase …
+2026-10-09 02:10:20,562  INFO      main — ============================================================
+2026-10-09 02:10:20,562  INFO      main — Pipeline finished.
+2026-10-09 02:10:20,562  INFO      main — ============================================================
+2026-10-09 02:11:03,950  INFO      main — ============================================================
+2026-10-09 02:11:03,951  INFO      main — Crypto Pump-and-Dump Early Detection Pipeline
+2026-10-09 02:11:03,951  INFO      main — ============================================================
+2026-10-09 02:11:03,951  INFO      main — Config : config.yaml
+2026-10-09 02:11:03,951  INFO      main — Phase  : ALL
+2026-10-09 02:11:03,959  INFO      src.data_loader — Configuration loaded from C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\config.yaml
+2026-10-09 02:11:03,959  INFO      phase1 — ============================================================
+2026-10-09 02:11:03,959  INFO      phase1 — PHASE 1 — Data Loading & Validation
+2026-10-09 02:11:03,959  INFO      phase1 — ============================================================
+2026-10-09 02:11:03,960  INFO      src.data_loader — Loading OHLCV data from data\raw\ohlcv.csv …
+2026-10-09 02:11:03,982  INFO      src.data_loader — Loading pump-event labels from data\labels\pump_events.csv …
+2026-10-09 02:11:03,996  WARNING   src.data_loader — Pump-label file contains symbols not found in OHLCV data: {'ATM/BTC', 'DARK/BTC', 'TAJ/BTC', 'BTF/USDT', 'DNT/BTC', 'FLDC/BTC', 'MNZ/BTC', 'ENJ/BTC', 'CXT/BTC', 'XRE/BTC', 'SMC/BTC', 'ONG/BTC', 'BSL/USDT', 'ETL/BTC', 'UFO/USDT', 'CTXC/BTC', 'TES/BTC', 'MBONK/BTC', 'AV/BTC', 'OXY/BTC', 'QKC/BTC', 'EDO/BTC', 'ATH/BTC', 'ICN/BTC', 'FUZZ/BTC', 'CRPT/BTC', 'TON/USDT', 'BNC/BTC', 'OAX/BTC', 'LVG/BTC', 'DAS/BTC', 'MBRS/BTC', 'RNT/USDT', 'AOA/BTC', 'EQT/BTC', 'GRW/BTC', 'COINV/BTC', 'SPR/BTC', 'NAV/BTC', 'NWC/BTC', 'YOYOW/BTC', 'PPT/BTC', 'MNSTP/USDT', 'IOC/BTC', 'BRX/BTC', 'GNT/BTC', 'BCC/BTC', 'EET/BTC', 'TFF/USDT', 'KMD/BTC', 'SRNT/BTC', 'OPAL/BTC', 'REN/BTC', 'NET/BTC', 'CC/BTC', 'DGB/BTC', 'POFI/USDT', 'FUN/BTC', 'STAR/BTC', 'BXH/USDT', 'BCPT/BTC', 'UNITS/BTC', 'BNBX/BTC', 'SEQ/BTC', 'DUSK/BTC', 'TKN/BTC', 'HGR/BTC', 'NLG/BTC', 'SWM/BTC', 'GAS/BTC', 'BERN/BTC', 'QBT/BTC', 'EDC/BTC', 'PAL/BTC', 'OAS/BTC', 'PPC/BTC', 'TDS/BTC', 'BELT/USDT', 'ELC/BTC', 'OK/BTC', 'UKG/BTC', 'SNPT/BTC', 'WSP/BTC', 'DOVE/USDT', 'DCRE/BTC', 'MTH/BTC', 'VERI/BTC', 'QQQ/USDT', 'SNX/BTC', 'CHR/USDT', 'ACM/BTC', 'Q2C/BTC', 'TOP/BTC', 'POE/BTC', 'DUO/USDT', 'WTC/BTC', 'GXS/BTC', 'CVC/BTC', 'SBD/BTC', 'GNR/BTC', 'BON/BTC', 'SNRG/BTC', 'BEST/BTC', 'MGO/BTC', 'CROC/BTC', 'WNXM/BTC', 'PINK/BTC', 'SLING/BTC', 'RCN/BTC', 'WW/BTC', 'TFD/BTC', 'ASN/BTC', 'CGEN/BTC', 'CLR/BTC', 'SPACE/BTC', 'RDN/BTC', 'GAM/BTC', 'INPAY/BTC', 'CDT/BTC', 'BYC/BTC', 'LINK/BTC', 'SIG/BTC', 'FXS/BTC', 'BBT/BTC', 'COAL/BTC', 'THETA/BTC', 'AST/BTC', 'LUN/BTC', 'CLOAK/BTC', 'EMP/BTC', 'KEEP/USDT', 'DORA/USDT', 'REV/BTC', 'HYFIT/USDT', 'CURE/BTC', 'SEV/BTC', 'DADI/BTC', 'R/BTC', 'ASCS/BTC', 'MLN/BTC', 'VIB/BTC', 'OSC/BTC', 'FIRE/BTC', 'AUR/BTC', 'HC/BTC', 'CNO/BTC', 'CFT/BTC', 'KAT/BTC', 'PRO/BTC', 'NEVA/BTC', 'DATA/BTC', 'ECOB/BTC', 'IQN/BTC', 'SKIN/BTC', 'SOON/BTC', 'OMNI/BTC', 'GTO/BTC', 'ELM/BTC', 'XCO/BTC', 'PDC/BTC', 'NMR/BTC', 'ALIS/BTC', 'CEXLT/USDT', 'MOJO/BTC', 'UTC/BTC', 'ENRG/BTC', 'ZER/BTC', 'GRC/BTC', 'TNT/BTC', 'CQST/BTC', 'LRC/BTC', 'GRT/BTC', 'DISTX/USDT', 'SPT/BTC', 'PLR/BTC', 'MTH/USDT', 'EMC2/BTC', 'CAN/BTC', 'DEP/USDT', 'AUTO/BTC', 'SRN/BTC', 'SWP/USDT', 'QTL/BTC', 'CRUMB/BTC', 'EUC/BTC', 'KALM/USDT', 'GET/BTC', 'GUA/BTC', 'UBT/BTC', 'DREP/BTC', 'WOM/USDT', 'BBEL/BTC', 'CGG/USDT', 'BCD/BTC', 'WRX/BTC', 'SIB/BTC', 'XPRO/BTC', 'DAI/BTC', 'EFL/BTC', 'FUEL/BTC', 'BASIC/USDT', 'TIME/BTC', 'VRC/BTC', 'ITEN/USDT', 'AGRS/BTC', 'OCEAN/BTC', 'STORJ/BTC', 'TIX/BTC', 'INJ/USDT', 'NETKO/BTC', 'DGD/BTC', 'NAS/BTC', 'FAIR/BTC', 'MASH/USDT', 'XZX/BTC', 'AUV/USDT', 'CHESS/BTC', 'DTB/BTC', 'GOD/USDT', 'VITE/BTC', 'AEROX/USDT', 'POWR/BTC', 'ELF/BTC', 'HAL/BTC', 'MANA/BTC', 'STND/BTC', 'REAP/USDT', 'AMB/BTC', 'IQT/BTC', 'DS/USDT', 'VIBE/BTC', 'DZC/BTC', 'EIDOS/USDT', 'ERC/BTC', 'XZC/BTC', 'XGM/USDT', 'SYS/BTC', 'NBOT/USDT', 'PTI/USDT', 'VEC/BTC', 'SUP/BTC', 'DALC/BTC', 'AMM/BTC', 'BQT/BTC', 'LSK/BTC', 'AEON/BTC', 'GRS/BTC', 'TIE/BTC', 'GO/BTC', 'GSY/ETH', 'XAUR/BTC', 'BVB/BTC', 'DOGE/BTC', 'GTEA/BTC', '611/BTC', 'NAX/BTC', 'STEEL/USDT', 'SAMK/USDT', 'EMT/BTC', 'HALV/USDT', 'RYA/BTC', 'RYTK/BTC', 'SYNX/BTC', 'FLM/BTC', 'CHRG/BTC', 'MATRX/BTC', 'ADX/BTC', 'CHAT/BTC', 'MITH/BTC', 'CND/BTC', 'YOYO/BTC', 'DBXC/USDT', 'HONOR/BTC', 'SHRF/BTC', 'ETI/USDT', 'HAC/BTC', 'SBIT/BTC', 'FRN/BTC', 'MAY/BTC', 'ZEN/BTC', 'BRD/BTC', 'BLN/BTC', 'DCNT/USDT', 'EXCL/BTC', 'TSL/USDT', 'NYAN/BTC', 'IOTX/BTC', 'JST/USDT', 'TUBER/USDT', 'IXT/BTC', 'BTCD/BTC', 'XTK/USDT', 'MARS/BTC', 'FDS/USDT', 'DKA/BTC', 'STORM/BTC', 'SDC/BTC', 'XBP/BTC', 'BOX/BTC', 'SUB/BTC', 'FTM/BTC', 'ARDR/BTC', 'FCD/BTC', 'EGC/BTC', 'NBT/BTC', 'EVO/BTC', 'STEEM/BTC', 'ABT/BTC', 'XRL/BTC', 'BTS/BTC', 'POLY/BTC', 'SLS/BTC', 'TORQ/BTC', 'MAGE/BTC', 'CLAM/BTC', 'ERY/BTC', 'IRL/BTC', 'BOLI/BTC', 'BDO/USDT', 'SNT/BTC', 'SAN/BTC', 'HTDF/USDT', 'RIYA/BTC', 'YOVI/BTC', 'RETRY/USDT', 'CFX/BTC', 'BAT/BTC', 'ORC/BTC', 'QOB/USDT', 'CHSB/BTC', 'AMA/USDT', 'SOIL/BTC', 'SUSD/BTC', 'MANIA/BTC', 'GHD/BTC', 'ALL/BTC', 'POA/BTC', 'WHL/BTC', 'FT/BTC', 'HQX/BTC', 'BUBO/BTC', 'LDC/BTC', 'SOUL/BTC', 'BEEZ/BTC', 'MORE/BTC', 'DODO/USDT', 'DCT/BTC', 'ONT/BTC', 'ACOIN/BTC', 'ABC/BTC', 'PTC/BTC', 'BNW/USDT', 'UNIC/BTC', 'SEL/BTC', 'PAX/BTC', 'WPR/BTC', 'BQT/USDT', 'AKRO/USDT', 'PIVX/BTC', 'STOX/USDT', 'TUSD/BTC', 'DRPU/BTC', 'WINGS/BTC', 'PAMP/USDT', 'GENS/USDT', 'NXC/BTC', 'KNC/BTC', 'ENJ/USDT', 'BQX/BTC', 'IND/BTC', 'BAS/USDT', 'ETT/BTC', 'UNB/BTC', 'VIA/BTC', 'BLZ/BTC', 'GUM/BTC', 'TKS/BTC', 'CS/USDT', 'VVI/BTC', 'INFX/BTC', 'FC/BTC', 'QLC/BTC', 'SNGLS/BTC', 'REP/BTC', 'STORJ/USDT', 'ARGUS/BTC', 'TB/BTC', 'WABI/BTC', 'AXIAV3/USDT', 'ESC/USDT', 'BTSY/BTC', 'STV/BTC', 'EZ/BTC', 'BSC/USDT', 'INS/BTC', 'MOD/BTC', 'SDT/USDT', 'NXS/BTC', 'DRXNE/BTC', '8BIT/BTC', 'BONDED/USDT', 'PEOS/USDT', 'GPL/BTC', 'GNO/BTC', 'FBS/USDT', 'AE/BTC', 'LEV/USDT', 'SCRT/BTC', 'XID/BTC', 'MDA/BTC', 'BTZ/BTC', 'FBN/USDT', 'CNNC/BTC', 'STPT/BTC', 'QSP/BTC', 'UMO/BTC', 'LDM/BTC', 'SPHR/BTC', 'PHB/BTC', 'SOP/USDT', 'MET/BTC', 'RBT/BTC', 'ADT/BTC', 'GBG/BTC', 'DGCL/BTC', 'MATIC/BTC', 'RNS/BTC', 'ING/BTC', 'BCS/BTC', 'BLOCK/BTC', 'SKR/BTC', 'MXC/USDT', 'TRK/BTC', 'ARI/BTC', 'THC/BTC', 'CWV/USDT', 'STY/BTC', 'MCT/BTC', 'XMG/BTC', 'OTN/BTC', 'XDEX/USDT', 'NKN/USDT', 'HDG/BTC', 'ORB/BTC', 'DOX/BTC', 'MYST/BTC', 'FLAX/BTC', 'BDL/BTC', 'BUSY/BTC', 'ZSE/BTC', 'CON/BTC', 'PARTY/BTC', 'BLZ/USDT', 'FIO/BTC', 'CREAM/USDT', 'IVY/BTC', 'PNT/BTC', 'SWT/BTC', 'AAC/USDT', 'OST/BTC', 'KING/BTC', 'MODEFI/USDT', 'MMDA/USDT', 'SKY/BTC', 'GREENF/BTC', 'SAK/BTC', 'XPTX/BTC', 'SLR/BTC', 'ETHOS/BTC', 'UNIC/USDT', 'BTS/USDT', 'TX/BTC', 'XST/BTC', 'C20/BTC', 'IDEX/BTC', 'SASHIMI/BTC', 'GDM/USDT', 'SBEAR/USDT', 'REA/BTC', 'LEND/BTC', 'TNB/BTC', 'HAUS/BTC', 'SNM/BTC', 'GUN/BTC', 'NULS/BTC', 'PAI/BTC', 'GVT/BTC', 'DVPN/USDT', 'LIBFX/USDT', 'BZRX/BTC', 'KRONE/BTC', 'CTIC3/BTC', 'GEO/BTC', 'UBQ/BTC', 'DRACO/BTC', 'MNE/BTC', 'ICX/USDT', 'PASL/BTC', 'PCOIN/BTC', 'BSTY/BTC', 'BRK/BTC', 'REQ/BTC', 'UFR/BTC', 'PIE/BTC', 'FANS/BTC', 'GSY/BTC', 'NEBL/BTC', 'EBG/BTC', 'INK/USDT', 'TCT/BTC', 'FC2/BTC', 'ULU/USDT', 'BLITZ/BTC', 'SUP/USDT', 'BUM/BTC', 'DLT/BTC', 'BSC/BTC', 'CAP/BTC', 'OPCX/BTC', 'PLC/BTC', 'LEMON/BTC', 'FLY/USDT', 'BIP/BTC', 'CRACK/BTC', 'M1/BTC', 'EVX/BTC', 'VERS/BTC', 'AZK/BTC', 'ARK/BTC', 'MNM/BTC', 'BTCST/BTC', 'GRN/BTC', 'ARN/BTC', 'GELD/BTC', 'U/BTC', 'RLC/BTC', 'ZNY/BTC', 'DVI/USDT', 'SCL/BTC', 'ORC/USDT', 'LOOM/BTC', 'CL/BTC', 'CREA/BTC', 'XXX/BTC', 'VC/USDT'}. These labels will be ignored during labeling.
+2026-10-09 02:11:03,997  INFO      phase1 — OHLCV  : 2500 rows, 5 symbols
+2026-10-09 02:11:03,997  INFO      phase1 — Labels : 2445 pump events
+2026-10-09 02:11:03,997  INFO      phase1 — Phase 1 complete.
+2026-10-09 02:11:03,997  INFO      phase2 — ============================================================
+2026-10-09 02:11:03,997  INFO      phase2 — PHASE 2 — Preprocessing & Labeling
+2026-10-09 02:11:03,997  INFO      phase2 — ============================================================
+2026-10-09 02:11:03,997  INFO      src.preprocessing — Preprocessing OHLCV data (2500 rows) …
+2026-10-09 02:11:04,009  INFO      src.preprocessing —   APPC/BTC — detected frequency: 0 days 00:05:00
+2026-10-09 02:11:04,011  INFO      src.preprocessing —   BNT/BTC — detected frequency: 0 days 00:05:00
+2026-10-09 02:11:04,012  INFO      src.preprocessing —   BTC/USDT — detected frequency: 0 days 00:05:00
+2026-10-09 02:11:04,013  INFO      src.preprocessing —   ETH/USDT — detected frequency: 0 days 00:05:00
+2026-10-09 02:11:04,014  INFO      src.preprocessing —   STMX/USDT — detected frequency: 0 days 00:05:00
+2026-10-09 02:11:04,014  INFO      src.preprocessing — Preprocessing complete: 2500 rows remain.
+2026-10-09 02:11:04,014  INFO      src.labeling — Creating binary labels with prediction horizon = 30 minutes …
+2026-10-09 02:11:04,030  INFO      src.labeling — Labeling complete: 2500 total, 6 positive (0.24%), 2494 negative
+2026-10-09 02:11:04,037  INFO      phase2 — Label distribution:
+   symbol  total  positive  negative  pct_positive
+ APPC/BTC    500         0       500           0.0
+  BNT/BTC    500         0       500           0.0
+ BTC/USDT    500         0       500           0.0
+ ETH/USDT    500         0       500           0.0
+STMX/USDT    500         6       494           1.2
+2026-10-09 02:11:04,039  INFO      phase2 — Phase 2 complete.
+2026-10-09 02:11:04,039  INFO      phase3 — ============================================================
+2026-10-09 02:11:04,039  INFO      phase3 — PHASE 3 — Feature Engineering
+2026-10-09 02:11:04,039  INFO      phase3 — ============================================================
+2026-10-09 02:11:04,039  INFO      src.features — Engineering features (rolling windows=[5, 10, 20, 50]) …
+2026-10-09 02:11:04,153  INFO      src.features — Feature engineering complete: 50 feature columns across 6 groups.
+2026-10-09 02:11:04,153  INFO      src.features —   price          : 13 features
+2026-10-09 02:11:04,153  INFO      src.features —   volume         : 11 features
+2026-10-09 02:11:04,153  INFO      src.features —   volatility     : 8 features
+2026-10-09 02:11:04,153  INFO      src.features —   momentum       : 5 features
+2026-10-09 02:11:04,153  INFO      src.features —   time           : 7 features
+2026-10-09 02:11:04,153  INFO      src.features —   price_volume   : 6 features
+2026-10-09 02:11:04,156  INFO      phase3 — Dropped 250 rows with NaN features (from rolling windows).
+2026-10-09 02:11:04,274  INFO      phase3 — Featured data saved (2250 rows, 59 cols).
+2026-10-09 02:11:04,274  INFO      phase3 — Phase 3 complete.
+2026-10-09 02:11:04,275  INFO      phase4 — ============================================================
+2026-10-09 02:11:04,275  INFO      phase4 — PHASE 4 — Chronological Split
+2026-10-09 02:11:04,275  INFO      phase4 — ============================================================
+2026-10-09 02:11:04,284  INFO      src.split — Chronological split complete:
+2026-10-09 02:11:04,284  INFO      src.split —   Train : 1575 rows (70.0%)
+2026-10-09 02:11:04,284  INFO      src.split —   Val   : 335 rows (14.9%)
+2026-10-09 02:11:04,284  INFO      src.split —   Test  : 340 rows (15.1%)
+2026-10-09 02:11:04,290  INFO      phase4 — Split summary:
+split  rows  positive  negative  pct_positive                start_time                  end_time
+train  1575         6      1569         0.381 2021-06-14 04:10:00+00:00 2021-06-15 06:20:00+00:00
+  val   335         0       335         0.000 2021-06-15 06:25:00+00:00 2021-06-15 11:55:00+00:00
+ test   340         0       340         0.000 2021-06-15 12:00:00+00:00 2021-06-15 17:35:00+00:00
+2026-10-09 02:11:04,292  INFO      src.split — Split summary saved to results\split_summary.csv
+2026-10-09 02:11:04,292  INFO      phase4 — Phase 4 complete.
+2026-10-09 02:11:04,292  INFO      phase5 — ============================================================
+2026-10-09 02:11:04,292  INFO      phase5 — PHASE 5 — Baseline Models
+2026-10-09 02:11:04,292  INFO      phase5 — ============================================================
+2026-10-09 02:11:04,431  INFO      src.baselines — Training model: rule_based
+2026-10-09 02:11:04,433  WARNING   src.baselines — NaN or inf values found in features. Filling with 0.
+2026-10-09 02:11:04,440  INFO      src.baselines — Model rule_based saved to models\rule_based_model.joblib
+2026-10-09 02:11:04,442  INFO      src.baselines — Training model: logistic_regression
+2026-10-09 02:11:04,443  WARNING   src.baselines — NaN or inf values found in features. Filling with 0.
+2026-10-09 02:11:04,712  INFO      src.baselines — Model logistic_regression saved to models\logistic_regression_model.joblib
+2026-10-09 02:11:04,715  INFO      src.baselines — Training model: random_forest
+2026-10-09 02:11:04,716  WARNING   src.baselines — NaN or inf values found in features. Filling with 0.
+2026-10-09 02:11:05,205  INFO      src.baselines — Model random_forest saved to models\random_forest_model.joblib
+2026-10-09 02:11:05,242  INFO      src.baselines — Training model: xgboost
+2026-10-09 02:11:05,243  WARNING   src.baselines — NaN or inf values found in features. Filling with 0.
+2026-10-09 02:11:05,452  INFO      src.baselines — Model xgboost saved to models\xgboost_model.joblib
+2026-10-09 02:11:05,462  INFO      src.anomaly_detection — Training Isolation Forest...
+2026-10-09 02:11:05,464  WARNING   src.anomaly_detection — NaN or inf values found in features. Filling with 0.
+2026-10-09 02:11:05,774  INFO      src.anomaly_detection — Isolation Forest model saved to models\isolation_forest_model.joblib
+2026-10-09 02:11:05,806  INFO      phase5 — Phase 5 complete — 5 models trained.
+2026-10-09 02:11:05,806  INFO      phase6 — ============================================================
+2026-10-09 02:11:05,806  INFO      phase6 — PHASE 6 — Temporal Model (LSTM/GRU)
+2026-10-09 02:11:05,806  INFO      phase6 — ============================================================
+2026-10-09 02:11:07,518  INFO      src.temporal_model — Starting temporal model training pipeline...
+2026-10-09 02:11:07,518  INFO      src.temporal_model — Using device: cpu
+2026-10-09 02:11:07,523  INFO      src.temporal_model — Using pos_weight for BCEWithLogitsLoss: 261.5000
+2026-10-09 02:11:08,955  INFO      src.temporal_model — Starting training for up to 50 epochs...
+2026-10-09 02:11:09,325  INFO      src.temporal_model — Epoch 1/50 - Train Loss: nan - Val Loss: nan
+2026-10-09 02:11:09,673  INFO      src.temporal_model — Epoch 2/50 - Train Loss: nan - Val Loss: nan
+2026-10-09 02:11:09,958  INFO      src.temporal_model — Epoch 3/50 - Train Loss: nan - Val Loss: nan
+2026-10-09 02:11:10,356  INFO      src.temporal_model — Epoch 4/50 - Train Loss: nan - Val Loss: nan
+2026-10-09 02:11:10,633  INFO      src.temporal_model — Epoch 5/50 - Train Loss: nan - Val Loss: nan
+2026-10-09 02:11:10,947  INFO      src.temporal_model — Epoch 6/50 - Train Loss: nan - Val Loss: nan
+2026-10-09 02:11:11,254  INFO      src.temporal_model — Epoch 7/50 - Train Loss: nan - Val Loss: nan
+2026-10-09 02:11:11,254  INFO      src.temporal_model — Early stopping triggered after 7 epochs.
+2026-10-09 02:11:11,254  INFO      src.temporal_model — Generating predictions for validation and test sets...
+2026-10-09 02:11:11,285  INFO      src.temporal_model — Pipeline completed. Val predictions shape: (306,), Test predictions shape: (311,)
+2026-10-09 02:11:11,286  INFO      phase6 — Temporal model training complete.
+2026-10-09 02:11:11,286  INFO      phase7 — ============================================================
+2026-10-09 02:11:11,286  INFO      phase7 — PHASE 7 — ETASE Framework
+2026-10-09 02:11:11,286  INFO      phase7 — ============================================================
+2026-10-09 02:11:11,296  ERROR     phase7 — ETASE failed: name 'FEATURE_REGISTRY' is assigned to before global declaration (etase.py, line 379)
+Traceback (most recent call last):
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 266, in phase_7
+    from src.etase import run_etase
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\src\etase.py", line 379
+    global FEATURE_REGISTRY
+    ^^^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: name 'FEATURE_REGISTRY' is assigned to before global declaration
+2026-10-09 02:11:11,297  INFO      phase8 — ============================================================
+2026-10-09 02:11:11,297  INFO      phase8 — PHASE 8 — Evaluation
+2026-10-09 02:11:11,297  INFO      phase8 — ============================================================
+2026-10-09 02:11:11,297  INFO      src.evaluation — Evaluating model: rule_based
+2026-10-09 02:11:11,406  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-09 02:11:11,406  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-09 02:11:11,406  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-09 02:11:11,415  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-09 02:11:11,417  INFO      src.evaluation —   rule_based — F1=0.0000  PR-AUC=nan  ROC-AUC=nan  LeadTime=nan min
+2026-10-09 02:11:11,417  INFO      src.evaluation — Evaluating model: logistic_regression
+2026-10-09 02:11:11,498  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-09 02:11:11,499  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-09 02:11:11,499  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-09 02:11:11,506  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-09 02:11:11,507  INFO      src.evaluation —   logistic_regression — F1=0.0000  PR-AUC=nan  ROC-AUC=nan  LeadTime=nan min
+2026-10-09 02:11:11,507  INFO      src.evaluation — Evaluating model: random_forest
+2026-10-09 02:11:11,577  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-09 02:11:11,578  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-09 02:11:11,578  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-09 02:11:11,583  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-09 02:11:11,585  INFO      src.evaluation —   random_forest — F1=0.0000  PR-AUC=nan  ROC-AUC=nan  LeadTime=nan min
+2026-10-09 02:11:11,585  INFO      src.evaluation — Evaluating model: xgboost
+2026-10-09 02:11:11,676  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-09 02:11:11,677  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-09 02:11:11,677  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-09 02:11:11,683  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-09 02:11:11,685  INFO      src.evaluation —   xgboost — F1=0.0000  PR-AUC=nan  ROC-AUC=nan  LeadTime=nan min
+2026-10-09 02:11:11,685  INFO      src.evaluation — Evaluating model: isolation_forest
+2026-10-09 02:11:11,752  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-09 02:11:11,752  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-09 02:11:11,752  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-09 02:11:11,758  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-09 02:11:11,760  INFO      src.evaluation —   isolation_forest — F1=0.0000  PR-AUC=nan  ROC-AUC=nan  LeadTime=nan min
+2026-10-09 02:11:11,760  INFO      src.evaluation — Evaluating model: temporal_lstm
+2026-10-09 02:11:11,826  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-09 02:11:11,827  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-09 02:11:11,827  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-09 02:11:11,832  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-09 02:11:11,834  INFO      src.evaluation —   temporal_lstm — F1=0.0000  PR-AUC=nan  ROC-AUC=nan  LeadTime=nan min
+2026-10-09 02:11:11,836  INFO      src.evaluation — Evaluation summary saved to results\model_comparison.csv
+2026-10-09 02:11:11,839  INFO      phase8 — Evaluation results:
+ precision  recall  f1  pr_auc  roc_auc  false_alarm_rate  detection_rate  accuracy  threshold  tp  fp  tn  fn               model  mean_lead_time_min  median_lead_time_min  n_true_positives  lead_time_available
+       0.0     0.0 0.0     NaN      NaN          0.000000             0.0  1.000000        0.5   0   0 340   0          rule_based                 NaN                   NaN                 0                False
+       0.0     0.0 0.0     NaN      NaN          0.017647             0.0  0.982353        0.5   0   6 334   0 logistic_regression                 NaN                   NaN                 0                False
+       0.0     0.0 0.0     NaN      NaN          0.000000             0.0  1.000000        0.5   0   0 340   0       random_forest                 NaN                   NaN                 0                False
+       0.0     0.0 0.0     NaN      NaN          0.000000             0.0  1.000000        0.5   0   0 340   0             xgboost                 NaN                   NaN                 0                False
+       0.0     0.0 0.0     NaN      NaN          0.079412             0.0  0.920588        0.5   0  27 313   0    isolation_forest                 NaN                   NaN                 0                False
+       0.0     0.0 0.0     NaN      NaN          0.000000             0.0  1.000000        0.5   0   0 311   0       temporal_lstm                 NaN                   NaN                 0                False
+2026-10-09 02:11:11,839  INFO      phase8 — Phase 8 complete.
+2026-10-09 02:11:11,839  INFO      phase9 — ============================================================
+2026-10-09 02:11:11,839  INFO      phase9 — PHASE 9 — Ablation Study
+2026-10-09 02:11:11,839  INFO      phase9 — ============================================================
+2026-10-09 02:11:11,846  INFO      src.ablation — Ablation study using XGBoost
+2026-10-09 02:11:11,848  INFO      src.ablation — --- Ablation: market_only  groups=['price', 'volume', 'volatility', 'price_volume'] ---
+2026-10-09 02:11:11,848  INFO      src.ablation —   Using 38 features: ['pct_return', 'log_return', 'price_change', 'rolling_return_5', 'rolling_return_10']
+2026-10-09 02:11:12,160  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-09 02:11:12,163  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-09 02:11:12,163  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-09 02:11:12,171  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-09 02:11:12,171  INFO      src.ablation —   market_only — F1=0.0000  PR-AUC=nan  ROC-AUC=nan
+2026-10-09 02:11:12,171  INFO      src.ablation — --- Ablation: temporal_only  groups=['time', 'momentum'] ---
+2026-10-09 02:11:12,171  INFO      src.ablation —   Using 12 features: ['hour', 'minute', 'day_of_week', 'hour_sin', 'hour_cos']
+2026-10-09 02:11:12,440  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-09 02:11:12,441  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-09 02:11:12,441  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-09 02:11:12,449  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-09 02:11:12,449  INFO      src.ablation —   temporal_only — F1=0.0000  PR-AUC=nan  ROC-AUC=nan
+2026-10-09 02:11:12,449  INFO      src.ablation — --- Ablation: market_temporal  groups=['price', 'volume', 'volatility', 'price_volume', 'time', 'momentum'] ---
+2026-10-09 02:11:12,449  INFO      src.ablation —   Using 50 features: ['pct_return', 'log_return', 'price_change', 'rolling_return_5', 'rolling_return_10']
+2026-10-09 02:11:12,809  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-09 02:11:12,811  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-09 02:11:12,811  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-09 02:11:12,819  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-09 02:11:12,820  INFO      src.ablation —   market_temporal — F1=0.0000  PR-AUC=nan  ROC-AUC=nan
+2026-10-09 02:11:12,820  INFO      src.ablation — --- Ablation: market_temporal_context  groups=['price', 'volume', 'volatility', 'price_volume', 'time', 'momentum', 'context'] ---
+2026-10-09 02:11:12,820  INFO      src.ablation —   Experiment 'market_temporal_context' requires 'context' features which are NOT available in the current dataset. Marking as unavailable (not fabricating results).
+2026-10-09 02:11:12,823  INFO      src.ablation — Ablation results saved to results\ablation_results.csv
+2026-10-09 02:11:12,826  INFO      phase9 — Ablation results:
+             experiment                                                                   feature_groups  n_features  precision  recall  f1  pr_auc  roc_auc  false_alarm_rate  detection_rate  mean_lead_time_min  threshold  available                                                       note
+            market_only                                ['price', 'volume', 'volatility', 'price_volume']          38        0.0     0.0 0.0     NaN      NaN          0.000000             0.0                 NaN        0.5       True                                                           
+          temporal_only                                                             ['time', 'momentum']          12        0.0     0.0 0.0     NaN      NaN          0.002941             0.0                 NaN        0.5       True                                                           
+        market_temporal            ['price', 'volume', 'volatility', 'price_volume', 'time', 'momentum']          50        0.0     0.0 0.0     NaN      NaN          0.000000             0.0                 NaN        0.5       True                                                           
+market_temporal_context ['price', 'volume', 'volatility', 'price_volume', 'time', 'momentum', 'context']           0        NaN     NaN NaN     NaN      NaN               NaN             NaN                 NaN        NaN      False Context/channel features not available in current dataset.
+2026-10-09 02:11:12,826  INFO      phase9 — Phase 9 complete.
+2026-10-09 02:11:12,827  INFO      phase10 — ============================================================
+2026-10-09 02:11:12,827  INFO      phase10 — PHASE 10 — Visualization
+2026-10-09 02:11:12,827  INFO      phase10 — ============================================================
+2026-10-09 02:11:13,285  INFO      src.visualization — Generating plots …
+2026-10-09 02:11:14,072  INFO      src.visualization —   Saved plot: results\price_volume_APPC_BTC.png
+2026-10-09 02:11:14,326  INFO      src.visualization —   Saved plot: results\volume_zscore_APPC_BTC.png
+2026-10-09 02:11:14,629  INFO      src.visualization —   Saved plot: results\pump_events_APPC_BTC.png
+2026-10-09 02:11:15,242  INFO      src.visualization —   Saved plot: results\price_volume_BNT_BTC.png
+2026-10-09 02:11:15,484  INFO      src.visualization —   Saved plot: results\volume_zscore_BNT_BTC.png
+2026-10-09 02:11:15,833  INFO      src.visualization —   Saved plot: results\pump_events_BNT_BTC.png
+2026-10-09 02:11:16,487  INFO      src.visualization —   Saved plot: results\price_volume_BTC_USDT.png
+2026-10-09 02:11:16,763  INFO      src.visualization —   Saved plot: results\volume_zscore_BTC_USDT.png
+2026-10-09 02:11:17,026  INFO      src.visualization —   Saved plot: results\pump_events_BTC_USDT.png
+2026-10-09 02:11:17,857  INFO      src.visualization —   Saved plot: results\price_volume_ETH_USDT.png
+2026-10-09 02:11:18,123  INFO      src.visualization —   Saved plot: results\volume_zscore_ETH_USDT.png
+2026-10-09 02:11:18,444  INFO      src.visualization —   Saved plot: results\pump_events_ETH_USDT.png
+2026-10-09 02:11:19,061  INFO      src.visualization —   Saved plot: results\price_volume_STMX_USDT.png
+2026-10-09 02:11:19,302  INFO      src.visualization —   Saved plot: results\volume_zscore_STMX_USDT.png
+2026-10-09 02:11:19,547  INFO      src.visualization —   Saved plot: results\pump_events_STMX_USDT.png
+2026-10-09 02:11:19,781  INFO      src.visualization —   Saved plot: results\pred_probs_rule_based.png
+2026-10-09 02:11:19,971  INFO      src.visualization —   Saved plot: results\confusion_matrix_rule_based.png
+2026-10-09 02:11:20,202  INFO      src.visualization —   Saved plot: results\pred_probs_logistic_regression.png
+2026-10-09 02:11:20,406  INFO      src.visualization —   Saved plot: results\confusion_matrix_logistic_regression.png
+2026-10-09 02:11:20,715  INFO      src.visualization —   Saved plot: results\pred_probs_random_forest.png
+2026-10-09 02:11:20,887  INFO      src.visualization —   Saved plot: results\confusion_matrix_random_forest.png
+2026-10-09 02:11:21,071  INFO      src.visualization —   Saved plot: results\pred_probs_xgboost.png
+2026-10-09 02:11:21,222  INFO      src.visualization —   Saved plot: results\confusion_matrix_xgboost.png
+2026-10-09 02:11:21,417  INFO      src.visualization —   Saved plot: results\pred_probs_isolation_forest.png
+2026-10-09 02:11:21,583  INFO      src.visualization —   Saved plot: results\confusion_matrix_isolation_forest.png
+2026-10-09 02:11:21,797  INFO      src.visualization —   Saved plot: results\pred_probs_temporal_lstm.png
+2026-10-09 02:11:21,974  INFO      src.visualization —   Saved plot: results\confusion_matrix_temporal_lstm.png
+2026-10-09 02:11:22,220  INFO      src.visualization —   Saved plot: results\pr_curve.png
+2026-10-09 02:11:22,443  INFO      src.visualization —   Saved plot: results\roc_curve.png
+2026-10-09 02:11:22,669  INFO      src.visualization —   Saved plot: results\model_comparison.png
+2026-10-09 02:11:22,836  INFO      src.visualization —   Saved plot: results\lead_time_distribution.png
+2026-10-09 02:11:23,045  INFO      src.visualization —   Saved plot: results\false_alarm_comparison.png
+2026-10-09 02:11:23,045  INFO      src.visualization — All plots generated.
+2026-10-09 02:11:23,045  INFO      phase10 — Phase 10 complete.
+2026-10-09 02:11:23,045  INFO      main — ============================================================
+2026-10-09 02:11:23,045  INFO      main — Pipeline finished.
+2026-10-09 02:11:23,045  INFO      main — ============================================================
+2026-10-27 22:47:37,708  INFO      main — ============================================================
+2026-10-27 22:47:37,709  INFO      main — Crypto Pump-and-Dump Early Detection Pipeline
+2026-10-27 22:47:37,709  INFO      main — ============================================================
+2026-10-27 22:47:37,709  INFO      main — Config : config.yaml
+2026-10-27 22:47:37,709  INFO      main — Phase  : ALL
+2026-10-27 22:47:37,715  INFO      src.data_loader — Configuration loaded from C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\config.yaml
+2026-10-27 22:47:37,716  INFO      phase1 — ============================================================
+2026-10-27 22:47:37,716  INFO      phase1 — PHASE 1 — Data Loading & Validation
+2026-10-27 22:47:37,716  INFO      phase1 — ============================================================
+2026-10-27 22:47:37,716  INFO      src.data_loader — Loading OHLCV data from data\raw\ohlcv.csv …
+2026-10-27 22:47:37,759  INFO      src.data_loader — Loading pump-event labels from data\labels\pump_events.csv …
+2026-10-27 22:47:37,771  WARNING   src.data_loader — Pump-label file contains symbols not found in OHLCV data: {'BDL/BTC', 'LVG/BTC', 'HQX/BTC', 'QQQ/USDT', 'ZNY/BTC', 'EFL/BTC', 'ASN/BTC', 'CFT/BTC', 'SWP/USDT', 'BTS/USDT', 'CAN/BTC', 'CON/BTC', 'ZSE/BTC', 'MATRX/BTC', 'SBIT/BTC', 'EMC2/BTC', 'OAX/BTC', 'FLY/USDT', 'PIVX/BTC', 'RETRY/USDT', 'SCRT/BTC', 'WNXM/BTC', 'ACOIN/BTC', 'YOVI/BTC', 'HONOR/BTC', 'TUBER/USDT', 'CND/BTC', 'CGEN/BTC', 'VIA/BTC', 'ABC/BTC', 'GAM/BTC', 'RYTK/BTC', 'SBEAR/USDT', 'AEON/BTC', 'IQN/BTC', 'UTC/BTC', 'DADI/BTC', 'GVT/BTC', 'CNNC/BTC', 'DGCL/BTC', 'ELC/BTC', 'KEEP/USDT', 'GXS/BTC', 'BSTY/BTC', 'CREA/BTC', 'XCO/BTC', 'WHL/BTC', 'MDA/BTC', 'XPTX/BTC', 'SNX/BTC', 'CHAT/BTC', 'BUM/BTC', 'NMR/BTC', 'QLC/BTC', 'XID/BTC', 'BXH/USDT', 'STOX/USDT', 'SLS/BTC', 'CC/BTC', 'NKN/USDT', 'TKS/BTC', 'PLC/BTC', 'ETI/USDT', 'LIBFX/USDT', 'DRACO/BTC', 'VIBE/BTC', 'BEST/BTC', 'DVPN/USDT', 'SYS/BTC', 'NLG/BTC', 'BCC/BTC', 'SOUL/BTC', 'IQT/BTC', 'BCS/BTC', 'ATM/BTC', 'OK/BTC', 'TAJ/BTC', 'GRC/BTC', 'RLC/BTC', 'ULU/USDT', 'FC2/BTC', 'THC/BTC', 'MLN/BTC', 'WW/BTC', 'XZC/BTC', 'OTN/BTC', 'IXT/BTC', 'GRT/BTC', 'KMD/BTC', 'SPHR/BTC', 'SYNX/BTC', 'NULS/BTC', 'DODO/USDT', 'BYC/BTC', 'ASCS/BTC', 'TON/USDT', 'THETA/BTC', 'VERI/BTC', 'EDO/BTC', 'HTDF/USDT', 'ONG/BTC', 'EVO/BTC', 'MGO/BTC', 'WRX/BTC', 'GRW/BTC', 'SIB/BTC', 'DALC/BTC', 'DZC/BTC', 'WTC/BTC', 'OXY/BTC', 'SNRG/BTC', 'FUZZ/BTC', 'GAS/BTC', 'DUO/USDT', 'AOA/BTC', 'XTK/USDT', 'TORQ/BTC', 'EMT/BTC', 'STORJ/USDT', 'POA/BTC', 'POLY/BTC', 'ALL/BTC', 'NBT/BTC', 'SLING/BTC', 'YOYO/BTC', 'SEV/BTC', 'BRK/BTC', 'BSC/USDT', 'AE/BTC', 'DARK/BTC', 'AEROX/USDT', 'QBT/BTC', 'GHD/BTC', 'SMC/BTC', 'BOX/BTC', 'DOVE/USDT', 'GTO/BTC', 'PHB/BTC', 'SOP/USDT', 'UMO/BTC', 'ZER/BTC', 'BLOCK/BTC', 'TIME/BTC', 'UBQ/BTC', 'MANA/BTC', 'SAN/BTC', 'DGD/BTC', 'BRX/BTC', 'NYAN/BTC', 'SASHIMI/BTC', 'LRC/BTC', 'CREAM/USDT', 'FCD/BTC', 'SDT/USDT', 'STPT/BTC', 'REV/BTC', 'U/BTC', 'AMM/BTC', 'MNSTP/USDT', 'DEP/USDT', 'BZRX/BTC', 'NAS/BTC', 'CHRG/BTC', 'CLAM/BTC', 'DUSK/BTC', 'BBEL/BTC', 'COINV/BTC', 'BTS/BTC', 'HDG/BTC', 'EBG/BTC', 'XDEX/USDT', 'BONDED/USDT', 'BUBO/BTC', 'MTH/BTC', 'XST/BTC', 'AXIAV3/USDT', 'MASH/USDT', 'DISTX/USDT', 'ETT/BTC', 'GREENF/BTC', 'LUN/BTC', 'IOC/BTC', 'DATA/BTC', 'XBP/BTC', 'NETKO/BTC', 'DCRE/BTC', 'CTXC/BTC', 'BNW/USDT', 'GBG/BTC', 'BDO/USDT', 'POFI/USDT', 'TFF/USDT', 'MNZ/BTC', 'AGRS/BTC', 'MITH/BTC', 'PPT/BTC', 'TIE/BTC', 'REAP/USDT', 'GELD/BTC', 'BCPT/BTC', 'OMNI/BTC', 'ENJ/USDT', 'WABI/BTC', 'RNS/BTC', 'HYFIT/USDT', 'OST/BTC', 'XRE/BTC', 'CRPT/BTC', 'Q2C/BTC', 'SUSD/BTC', 'ARK/BTC', 'GSY/ETH', 'QTL/BTC', 'SNGLS/BTC', 'PIE/BTC', 'ARI/BTC', 'CFX/BTC', 'SAK/BTC', 'CHESS/BTC', 'HAC/BTC', 'SNM/BTC', 'RDN/BTC', 'SUP/USDT', 'AAC/USDT', 'DOX/BTC', 'BASIC/USDT', 'MYST/BTC', 'EMP/BTC', 'R/BTC', 'SCL/BTC', 'SKR/BTC', 'HALV/USDT', 'OAS/BTC', 'SKIN/BTC', 'FBS/USDT', 'PINK/BTC', 'DVI/USDT', 'ITEN/USDT', 'NET/BTC', 'IND/BTC', 'INS/BTC', 'INJ/USDT', 'XZX/BTC', 'PPC/BTC', 'DKA/BTC', 'ARDR/BTC', 'SAMK/USDT', 'MORE/BTC', 'SPACE/BTC', 'STY/BTC', 'MCT/BTC', '611/BTC', 'TES/BTC', 'BTSY/BTC', 'DRXNE/BTC', 'CLOAK/BTC', 'NAX/BTC', 'AMA/USDT', 'AUR/BTC', 'ING/BTC', 'SHRF/BTC', 'MODEFI/USDT', 'BVB/BTC', 'STND/BTC', 'IRL/BTC', 'HAUS/BTC', 'PLR/BTC', 'ENRG/BTC', 'WSP/BTC', 'FUN/BTC', 'GUN/BTC', 'DGB/BTC', 'LINK/BTC', 'UNIC/BTC', 'CWV/USDT', 'LDM/BTC', 'REA/BTC', 'M1/BTC', 'EGC/BTC', 'PEOS/USDT', 'MXC/USDT', 'BTCD/BTC', 'ARGUS/BTC', 'GNO/BTC', 'BSL/USDT', 'CROC/BTC', 'BOLI/BTC', 'DREP/BTC', 'IVY/BTC', 'SEL/BTC', 'UBT/BTC', 'BQX/BTC', 'BAS/USDT', 'BTCST/BTC', 'QSP/BTC', 'TRK/BTC', 'NWC/BTC', 'TCT/BTC', 'GRN/BTC', 'ORC/USDT', 'PRO/BTC', 'FXS/BTC', 'EDC/BTC', 'BTF/USDT', 'FAIR/BTC', 'MARS/BTC', 'SPT/BTC', 'VERS/BTC', 'SKY/BTC', 'DNT/BTC', 'MET/BTC', 'POWR/BTC', 'GENS/USDT', 'PNT/BTC', 'GEO/BTC', 'NXC/BTC', 'HGR/BTC', 'AZK/BTC', 'SRNT/BTC', 'XXX/BTC', 'CEXLT/USDT', 'UNB/BTC', 'FUEL/BTC', 'MAGE/BTC', 'TNT/BTC', 'EUC/BTC', 'LEMON/BTC', 'FANS/BTC', 'FT/BTC', 'QOB/USDT', 'ARN/BTC', 'OPAL/BTC', 'DCNT/USDT', 'STV/BTC', 'ADX/BTC', 'GRS/BTC', 'STAR/BTC', 'KNC/BTC', 'CQST/BTC', 'AV/BTC', 'BAT/BTC', 'POE/BTC', 'EXCL/BTC', 'AKRO/USDT', 'C20/BTC', 'REN/BTC', 'ALIS/BTC', 'SNPT/BTC', 'RNT/USDT', 'FRN/BTC', 'GUA/BTC', 'BNC/BTC', 'DTB/BTC', 'UFO/USDT', 'UFR/BTC', 'WPR/BTC', 'SUB/BTC', 'DORA/USDT', 'PAI/BTC', 'SEQ/BTC', '8BIT/BTC', 'MNM/BTC', 'ATH/BTC', 'COAL/BTC', 'DRPU/BTC', 'DOGE/BTC', 'PAX/BTC', 'IOTX/BTC', 'NEVA/BTC', 'PARTY/BTC', 'BQT/USDT', 'TIX/BTC', 'PASL/BTC', 'EQT/BTC', 'CTIC3/BTC', 'GNT/BTC', 'SUP/BTC', 'GUM/BTC', 'FLDC/BTC', 'FLM/BTC', 'EET/BTC', 'INFX/BTC', 'VVI/BTC', 'CRUMB/BTC', 'TKN/BTC', 'STORJ/BTC', 'LEV/USDT', 'WINGS/BTC', 'ENJ/BTC', 'VC/USDT', 'VIB/BTC', 'CAP/BTC', 'CNO/BTC', 'EIDOS/USDT', 'XAUR/BTC', 'XMG/BTC', 'FIRE/BTC', 'HC/BTC', 'ADT/BTC', 'YOYOW/BTC', 'CGG/USDT', 'MTH/USDT', 'ICX/USDT', 'ABT/BTC', 'GDM/USDT', 'PTI/USDT', 'SNT/BTC', 'SPR/BTC', 'XPRO/BTC', 'SBD/BTC', 'FLAX/BTC', 'FIO/BTC', 'BCD/BTC', 'MBONK/BTC', 'MNE/BTC', 'FTM/BTC', 'MANIA/BTC', 'XRL/BTC', 'TUSD/BTC', 'LOOM/BTC', 'UKG/BTC', 'DBXC/USDT', 'GNR/BTC', 'NEBL/BTC', 'BSC/BTC', 'CDT/BTC', 'CS/USDT', 'ECOB/BTC', 'MATIC/BTC', 'CHSB/BTC', 'OCEAN/BTC', 'STORM/BTC', 'ELM/BTC', 'UNIC/USDT', 'ETL/BTC', 'EZ/BTC', 'NBOT/USDT', 'ESC/USDT', 'BBT/BTC', 'AST/BTC', 'AUV/USDT', 'RIYA/BTC', 'SRN/BTC', 'BQT/BTC', 'EVX/BTC', 'ORC/BTC', 'RYA/BTC', 'CRACK/BTC', 'SWM/BTC', 'UNITS/BTC', 'SLR/BTC', 'OPCX/BTC', 'BNBX/BTC', 'MAY/BTC', 'PAL/BTC', 'FBN/USDT', 'GSY/BTC', 'SOON/BTC', 'CVC/BTC', 'CL/BTC', 'NXS/BTC', 'RBT/BTC', 'CLR/BTC', 'AUTO/BTC', 'OSC/BTC', 'KALM/USDT', 'RCN/BTC', 'GTEA/BTC', 'TX/BTC', 'SOIL/BTC', 'WOM/USDT', 'PCOIN/BTC', 'REP/BTC', 'JST/USDT', 'CXT/BTC', 'MBRS/BTC', 'GOD/USDT', 'ERY/BTC', 'TSL/USDT', 'VITE/BTC', 'KAT/BTC', 'BELT/USDT', 'PAMP/USDT', 'QKC/BTC', 'INK/USDT', 'TOP/BTC', 'PDC/BTC', 'DAI/BTC', 'ONT/BTC', 'SWT/BTC', 'BLZ/USDT', 'GET/BTC', 'VRC/BTC', 'PTC/BTC', 'SDC/BTC', 'BRD/BTC', 'BLZ/BTC', 'CHR/USDT', 'BUSY/BTC', 'NAV/BTC', 'FC/BTC', 'ACM/BTC', 'ETHOS/BTC', 'VEC/BTC', 'MMDA/USDT', 'LDC/BTC', 'SIG/BTC', 'BERN/BTC', 'DS/USDT', 'BTZ/BTC', 'ELF/BTC', 'STEEM/BTC', 'KRONE/BTC', 'ORB/BTC', 'MOJO/BTC', 'TFD/BTC', 'BLN/BTC', 'HAL/BTC', 'ERC/BTC', 'GPL/BTC', 'BIP/BTC', 'XGM/USDT', 'INPAY/BTC', 'REQ/BTC', 'TNB/BTC', 'BON/BTC', 'MOD/BTC', 'DCT/BTC', 'TB/BTC', 'IDEX/BTC', 'BLITZ/BTC', 'AMB/BTC', 'BEEZ/BTC', 'ICN/BTC', 'STEEL/USDT', 'TDS/BTC', 'LEND/BTC', 'CURE/BTC', 'DLT/BTC', 'LSK/BTC', 'DAS/BTC', 'ZEN/BTC', 'FDS/USDT', 'KING/BTC', 'GO/BTC'}. These labels will be ignored during labeling.
+2026-10-27 22:47:37,771  INFO      phase1 — OHLCV  : 2500 rows, 5 symbols
+2026-10-27 22:47:37,773  INFO      phase1 — Labels : 2445 pump events
+2026-10-27 22:47:37,773  INFO      phase1 — Phase 1 complete.
+2026-10-27 22:47:37,773  INFO      phase2 — ============================================================
+2026-10-27 22:47:37,773  INFO      phase2 — PHASE 2 — Preprocessing & Labeling
+2026-10-27 22:47:37,773  INFO      phase2 — ============================================================
+2026-10-27 22:47:37,773  INFO      src.preprocessing — Preprocessing OHLCV data (2500 rows) …
+2026-10-27 22:47:37,796  INFO      src.labeling — Creating binary labels with prediction horizon = 30 minutes …
+2026-10-27 22:47:37,813  INFO      src.labeling — Labeling complete: 2500 total, 6 positive (0.24%), 2494 negative
+2026-10-27 22:47:37,819  INFO      phase2 — Label distribution:
+   symbol  total  positive  negative  pct_positive
+ APPC/BTC    500         0       500           0.0
+  BNT/BTC    500         0       500           0.0
+ BTC/USDT    500         0       500           0.0
+ ETH/USDT    500         0       500           0.0
+STMX/USDT    500         6       494           1.2
+2026-10-27 22:47:37,821  INFO      phase2 — Phase 2 complete.
+2026-10-27 22:47:37,821  INFO      phase3 — ============================================================
+2026-10-27 22:47:37,822  INFO      phase3 — PHASE 3 — Feature Engineering
+2026-10-27 22:47:37,822  INFO      phase3 — ============================================================
+2026-10-27 22:47:37,822  INFO      src.features — Engineering features (rolling windows=[5, 10, 20, 50]) …
+2026-10-27 22:47:37,909  INFO      src.features — Feature engineering complete: 50 feature columns across 6 groups.
+2026-10-27 22:47:37,910  INFO      src.features —   price          : 13 features
+2026-10-27 22:47:37,910  INFO      src.features —   volume         : 11 features
+2026-10-27 22:47:37,910  INFO      src.features —   volatility     : 8 features
+2026-10-27 22:47:37,910  INFO      src.features —   momentum       : 5 features
+2026-10-27 22:47:37,910  INFO      src.features —   time           : 7 features
+2026-10-27 22:47:37,911  INFO      src.features —   price_volume   : 6 features
+2026-10-27 22:47:37,914  INFO      phase3 — Dropped 250 rows with NaN features (from rolling windows).
+2026-10-27 22:47:38,022  INFO      phase3 — Featured data saved (2250 rows, 59 cols).
+2026-10-27 22:47:38,022  INFO      phase3 — Phase 3 complete.
+2026-10-27 22:47:38,022  INFO      phase4 — ============================================================
+2026-10-27 22:47:38,023  INFO      phase4 — PHASE 4 — Chronological Split
+2026-10-27 22:47:38,023  INFO      phase4 — ============================================================
+2026-10-27 22:47:38,032  INFO      src.split — Chronological split complete:
+2026-10-27 22:47:38,032  INFO      src.split —   Train : 1575 rows (70.0%)
+2026-10-27 22:47:38,032  INFO      src.split —   Val   : 335 rows (14.9%)
+2026-10-27 22:47:38,032  INFO      src.split —   Test  : 340 rows (15.1%)
+2026-10-27 22:47:38,047  INFO      phase4 — Split summary:
+split  rows  positive  negative  pct_positive                start_time                  end_time
+train  1575         6      1569         0.381 2021-06-14 04:10:00+00:00 2021-06-15 06:20:00+00:00
+  val   335         0       335         0.000 2021-06-15 06:25:00+00:00 2021-06-15 11:55:00+00:00
+ test   340         0       340         0.000 2021-06-15 12:00:00+00:00 2021-06-15 17:35:00+00:00
+2026-10-27 22:47:38,049  INFO      src.split — Split summary saved to results\split_summary.csv
+2026-10-27 22:47:38,049  INFO      phase4 — Phase 4 complete.
+2026-10-27 22:47:38,049  INFO      phase5 — ============================================================
+2026-10-27 22:47:38,049  INFO      phase5 — PHASE 5 — Baseline Models
+2026-10-27 22:47:38,049  INFO      phase5 — ============================================================
+2026-10-27 22:47:38,187  INFO      src.baselines — Training model: rule_based
+2026-10-27 22:47:38,188  WARNING   src.baselines — NaN or inf values found in features. Filling with 0.
+2026-10-27 22:47:38,193  INFO      src.baselines — Model rule_based saved to models\rule_based_model.joblib
+2026-10-27 22:47:38,196  INFO      src.baselines — Training model: logistic_regression
+2026-10-27 22:47:38,196  WARNING   src.baselines — NaN or inf values found in features. Filling with 0.
+2026-10-27 22:47:38,444  INFO      src.baselines — Model logistic_regression saved to models\logistic_regression_model.joblib
+2026-10-27 22:47:38,447  INFO      src.baselines — Training model: random_forest
+2026-10-27 22:47:38,447  WARNING   src.baselines — NaN or inf values found in features. Filling with 0.
+2026-10-27 22:47:38,900  INFO      src.baselines — Model random_forest saved to models\random_forest_model.joblib
+2026-10-27 22:47:38,937  INFO      src.baselines — Training model: xgboost
+2026-10-27 22:47:38,938  WARNING   src.baselines — NaN or inf values found in features. Filling with 0.
+2026-10-27 22:47:39,108  INFO      src.baselines — Model xgboost saved to models\xgboost_model.joblib
+2026-10-27 22:47:39,120  INFO      src.anomaly_detection — Training Isolation Forest...
+2026-10-27 22:47:39,121  WARNING   src.anomaly_detection — NaN or inf values found in features. Filling with 0.
+2026-10-27 22:47:39,408  INFO      src.anomaly_detection — Isolation Forest model saved to models\isolation_forest_model.joblib
+2026-10-27 22:47:39,438  INFO      phase5 — Phase 5 complete — 5 models trained.
+2026-10-27 22:47:39,438  INFO      phase6 — ============================================================
+2026-10-27 22:47:39,438  INFO      phase6 — PHASE 6 — Temporal Model (LSTM/GRU)
+2026-10-27 22:47:39,438  INFO      phase6 — ============================================================
+2026-10-27 22:47:42,443  INFO      src.temporal_model — Starting temporal model training pipeline...
+2026-10-27 22:47:42,443  INFO      src.temporal_model — Using device: cpu
+2026-10-27 22:47:42,512  INFO      src.temporal_model — Using pos_weight for BCEWithLogitsLoss: 261.5000
+2026-10-27 22:47:44,469  INFO      src.temporal_model — Starting training for up to 50 epochs...
+2026-10-27 22:47:44,814  INFO      src.temporal_model — Epoch 1/50 - Train Loss: nan - Val Loss: nan
+2026-10-27 22:47:45,059  INFO      src.temporal_model — Epoch 2/50 - Train Loss: nan - Val Loss: nan
+2026-10-27 22:47:45,295  INFO      src.temporal_model — Epoch 3/50 - Train Loss: nan - Val Loss: nan
+2026-10-27 22:47:45,535  INFO      src.temporal_model — Epoch 4/50 - Train Loss: nan - Val Loss: nan
+2026-10-27 22:47:45,774  INFO      src.temporal_model — Epoch 5/50 - Train Loss: nan - Val Loss: nan
+2026-10-27 22:47:46,028  INFO      src.temporal_model — Epoch 6/50 - Train Loss: nan - Val Loss: nan
+2026-10-27 22:47:46,276  INFO      src.temporal_model — Epoch 7/50 - Train Loss: nan - Val Loss: nan
+2026-10-27 22:47:46,277  INFO      src.temporal_model — Early stopping triggered after 7 epochs.
+2026-10-27 22:47:46,277  INFO      src.temporal_model — Generating predictions for validation and test sets...
+2026-10-27 22:47:46,305  INFO      src.temporal_model — Pipeline completed. Val predictions shape: (306,), Test predictions shape: (311,)
+2026-10-27 22:47:46,305  INFO      phase6 — Temporal model training complete.
+2026-10-27 22:47:46,305  INFO      phase7 — ============================================================
+2026-10-27 22:47:46,305  INFO      phase7 — PHASE 7 — ETASE Framework
+2026-10-27 22:47:46,305  INFO      phase7 — ============================================================
+2026-10-27 22:47:46,323  ERROR     phase7 — ETASE failed: name 'FEATURE_REGISTRY' is assigned to before global declaration (etase.py, line 379)
+Traceback (most recent call last):
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\main.py", line 266, in phase_7
+    from src.etase import run_etase
+  File "C:\Users\shrey\.gemini\antigravity\scratch\crypto-pump-detection\src\etase.py", line 379
+    global FEATURE_REGISTRY
+    ^^^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: name 'FEATURE_REGISTRY' is assigned to before global declaration
+2026-10-27 22:47:46,324  INFO      phase8 — ============================================================
+2026-10-27 22:47:46,324  INFO      phase8 — PHASE 8 — Evaluation
+2026-10-27 22:47:46,324  INFO      phase8 — ============================================================
+2026-10-27 22:47:46,325  INFO      src.evaluation — Evaluating model: rule_based
+2026-10-27 22:47:46,408  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-27 22:47:46,409  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-27 22:47:46,409  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-27 22:47:46,416  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-27 22:47:46,419  INFO      src.evaluation —   rule_based — F1=0.0000  PR-AUC=nan  ROC-AUC=nan  LeadTime=nan min
+2026-10-27 22:47:46,419  INFO      src.evaluation — Evaluating model: logistic_regression
+2026-10-27 22:47:46,498  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-27 22:47:46,499  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-27 22:47:46,499  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-27 22:47:46,506  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-27 22:47:46,508  INFO      src.evaluation —   logistic_regression — F1=0.0000  PR-AUC=nan  ROC-AUC=nan  LeadTime=nan min
+2026-10-27 22:47:46,508  INFO      src.evaluation — Evaluating model: random_forest
+2026-10-27 22:47:46,573  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-27 22:47:46,574  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-27 22:47:46,574  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-27 22:47:46,580  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-27 22:47:46,582  INFO      src.evaluation —   random_forest — F1=0.0000  PR-AUC=nan  ROC-AUC=nan  LeadTime=nan min
+2026-10-27 22:47:46,582  INFO      src.evaluation — Evaluating model: xgboost
+2026-10-27 22:47:46,648  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-27 22:47:46,648  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-27 22:47:46,648  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-27 22:47:46,654  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-27 22:47:46,656  INFO      src.evaluation —   xgboost — F1=0.0000  PR-AUC=nan  ROC-AUC=nan  LeadTime=nan min
+2026-10-27 22:47:46,656  INFO      src.evaluation — Evaluating model: isolation_forest
+2026-10-27 22:47:46,723  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-27 22:47:46,723  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-27 22:47:46,723  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-27 22:47:46,728  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-27 22:47:46,730  INFO      src.evaluation —   isolation_forest — F1=0.0000  PR-AUC=nan  ROC-AUC=nan  LeadTime=nan min
+2026-10-27 22:47:46,730  INFO      src.evaluation — Evaluating model: temporal_lstm
+2026-10-27 22:47:46,794  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-27 22:47:46,794  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-27 22:47:46,794  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-27 22:47:46,800  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-27 22:47:46,802  INFO      src.evaluation —   temporal_lstm — F1=0.0000  PR-AUC=nan  ROC-AUC=nan  LeadTime=nan min
+2026-10-27 22:47:46,804  INFO      src.evaluation — Evaluation summary saved to results\model_comparison.csv
+2026-10-27 22:47:46,807  INFO      phase8 — Evaluation results:
+ precision  recall  f1  pr_auc  roc_auc  false_alarm_rate  detection_rate  accuracy  threshold  tp  fp  tn  fn               model  mean_lead_time_min  median_lead_time_min  n_true_positives  lead_time_available
+       0.0     0.0 0.0     NaN      NaN          0.000000             0.0  1.000000        0.5   0   0 340   0          rule_based                 NaN                   NaN                 0                False
+       0.0     0.0 0.0     NaN      NaN          0.017647             0.0  0.982353        0.5   0   6 334   0 logistic_regression                 NaN                   NaN                 0                False
+       0.0     0.0 0.0     NaN      NaN          0.000000             0.0  1.000000        0.5   0   0 340   0       random_forest                 NaN                   NaN                 0                False
+       0.0     0.0 0.0     NaN      NaN          0.000000             0.0  1.000000        0.5   0   0 340   0             xgboost                 NaN                   NaN                 0                False
+       0.0     0.0 0.0     NaN      NaN          0.079412             0.0  0.920588        0.5   0  27 313   0    isolation_forest                 NaN                   NaN                 0                False
+       0.0     0.0 0.0     NaN      NaN          0.000000             0.0  1.000000        0.5   0   0 311   0       temporal_lstm                 NaN                   NaN                 0                False
+2026-10-27 22:47:46,807  INFO      phase8 — Phase 8 complete.
+2026-10-27 22:47:46,807  INFO      phase9 — ============================================================
+2026-10-27 22:47:46,807  INFO      phase9 — PHASE 9 — Ablation Study
+2026-10-27 22:47:46,807  INFO      phase9 — ============================================================
+2026-10-27 22:47:46,813  INFO      src.ablation — Ablation study using XGBoost
+2026-10-27 22:47:46,814  INFO      src.ablation — --- Ablation: market_only  groups=['price', 'volume', 'volatility', 'price_volume'] ---
+2026-10-27 22:47:46,814  INFO      src.ablation —   Using 38 features: ['pct_return', 'log_return', 'price_change', 'rolling_return_5', 'rolling_return_10']
+2026-10-27 22:47:47,051  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-27 22:47:47,051  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-27 22:47:47,051  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-27 22:47:47,058  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-27 22:47:47,058  INFO      src.ablation —   market_only — F1=0.0000  PR-AUC=nan  ROC-AUC=nan
+2026-10-27 22:47:47,058  INFO      src.ablation — --- Ablation: temporal_only  groups=['time', 'momentum'] ---
+2026-10-27 22:47:47,058  INFO      src.ablation —   Using 12 features: ['hour', 'minute', 'day_of_week', 'hour_sin', 'hour_cos']
+2026-10-27 22:47:47,271  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-27 22:47:47,271  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-27 22:47:47,271  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-27 22:47:47,279  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-27 22:47:47,280  INFO      src.ablation —   temporal_only — F1=0.0000  PR-AUC=nan  ROC-AUC=nan
+2026-10-27 22:47:47,280  INFO      src.ablation — --- Ablation: market_temporal  groups=['price', 'volume', 'volatility', 'price_volume', 'time', 'momentum'] ---
+2026-10-27 22:47:47,280  INFO      src.ablation —   Using 50 features: ['pct_return', 'log_return', 'price_change', 'rolling_return_5', 'rolling_return_10']
+2026-10-27 22:47:47,600  INFO      src.evaluation — Best threshold: 0.5000 (F1=0.0000)
+2026-10-27 22:47:47,600  WARNING   src.evaluation — No positive samples in y_true — metrics may be undefined.
+2026-10-27 22:47:47,601  WARNING   src.evaluation — Only one class present in y_true.
+2026-10-27 22:47:47,608  WARNING   src.evaluation — No true-positive predictions — lead-time analysis is unavailable. This is reported honestly; results are NOT fabricated.
+2026-10-27 22:47:47,608  INFO      src.ablation —   market_temporal — F1=0.0000  PR-AUC=nan  ROC-AUC=nan
+2026-10-27 22:47:47,608  INFO      src.ablation — --- Ablation: market_temporal_context  groups=['price', 'volume', 'volatility', 'price_volume', 'time', 'momentum', 'context'] ---
+2026-10-27 22:47:47,608  INFO      src.ablation —   Experiment 'market_temporal_context' requires 'context' features which are NOT available in the current dataset. Marking as unavailable (not fabricating results).
+2026-10-27 22:47:47,610  INFO      src.ablation — Ablation results saved to results\ablation_results.csv
+2026-10-27 22:47:47,614  INFO      phase9 — Ablation results:
+             experiment                                                                   feature_groups  n_features  precision  recall  f1  pr_auc  roc_auc  false_alarm_rate  detection_rate  mean_lead_time_min  threshold  available                                                       note
+            market_only                                ['price', 'volume', 'volatility', 'price_volume']          38        0.0     0.0 0.0     NaN      NaN          0.000000             0.0                 NaN        0.5       True                                                           
+          temporal_only                                                             ['time', 'momentum']          12        0.0     0.0 0.0     NaN      NaN          0.002941             0.0                 NaN        0.5       True                                                           
+        market_temporal            ['price', 'volume', 'volatility', 'price_volume', 'time', 'momentum']          50        0.0     0.0 0.0     NaN      NaN          0.000000             0.0                 NaN        0.5       True                                                           
+market_temporal_context ['price', 'volume', 'volatility', 'price_volume', 'time', 'momentum', 'context']           0        NaN     NaN NaN     NaN      NaN               NaN             NaN                 NaN        NaN      False Context/channel features not available in current dataset.
+2026-10-27 22:47:47,614  INFO      phase9 — Phase 9 complete.
+2026-10-27 22:47:47,615  INFO      phase10 — ============================================================
+2026-10-27 22:47:47,615  INFO      phase10 — PHASE 10 — Visualization
+2026-10-27 22:47:47,615  INFO      phase10 — ============================================================
+2026-10-27 22:47:48,397  INFO      src.visualization — Generating plots …
+2026-10-27 22:47:49,156  INFO      src.visualization —   Saved plot: results\price_volume_APPC_BTC.png
+2026-10-27 22:47:49,379  INFO      src.visualization —   Saved plot: results\volume_zscore_APPC_BTC.png
+2026-10-27 22:47:49,652  INFO      src.visualization —   Saved plot: results\pump_events_APPC_BTC.png
+2026-10-27 22:47:50,220  INFO      src.visualization —   Saved plot: results\price_volume_BNT_BTC.png
+2026-10-27 22:47:50,439  INFO      src.visualization —   Saved plot: results\volume_zscore_BNT_BTC.png
+2026-10-27 22:47:50,754  INFO      src.visualization —   Saved plot: results\pump_events_BNT_BTC.png
+2026-10-27 22:47:51,319  INFO      src.visualization —   Saved plot: results\price_volume_BTC_USDT.png
+2026-10-27 22:47:51,541  INFO      src.visualization —   Saved plot: results\volume_zscore_BTC_USDT.png
+2026-10-27 22:47:51,760  INFO      src.visualization —   Saved plot: results\pump_events_BTC_USDT.png
+2026-10-27 22:47:52,508  INFO      src.visualization —   Saved plot: results\price_volume_ETH_USDT.png
+2026-10-27 22:47:52,728  INFO      src.visualization —   Saved plot: results\volume_zscore_ETH_USDT.png
+2026-10-27 22:47:52,939  INFO      src.visualization —   Saved plot: results\pump_events_ETH_USDT.png
+2026-10-27 22:47:53,480  INFO      src.visualization —   Saved plot: results\price_volume_STMX_USDT.png
+2026-10-27 22:47:53,699  INFO      src.visualization —   Saved plot: results\volume_zscore_STMX_USDT.png
+2026-10-27 22:47:53,915  INFO      src.visualization —   Saved plot: results\pump_events_STMX_USDT.png
+2026-10-27 22:47:54,078  INFO      src.visualization —   Saved plot: results\pred_probs_rule_based.png
+2026-10-27 22:47:54,213  INFO      src.visualization —   Saved plot: results\confusion_matrix_rule_based.png
+2026-10-27 22:47:54,388  INFO      src.visualization —   Saved plot: results\pred_probs_logistic_regression.png
+2026-10-27 22:47:54,526  INFO      src.visualization —   Saved plot: results\confusion_matrix_logistic_regression.png
+2026-10-27 22:47:54,693  INFO      src.visualization —   Saved plot: results\pred_probs_random_forest.png
+2026-10-27 22:47:54,829  INFO      src.visualization —   Saved plot: results\confusion_matrix_random_forest.png
+2026-10-27 22:47:54,994  INFO      src.visualization —   Saved plot: results\pred_probs_xgboost.png
+2026-10-27 22:47:55,130  INFO      src.visualization —   Saved plot: results\confusion_matrix_xgboost.png
+2026-10-27 22:47:55,315  INFO      src.visualization —   Saved plot: results\pred_probs_isolation_forest.png
+2026-10-27 22:47:55,451  INFO      src.visualization —   Saved plot: results\confusion_matrix_isolation_forest.png
+2026-10-27 22:47:55,636  INFO      src.visualization —   Saved plot: results\pred_probs_temporal_lstm.png
+2026-10-27 22:47:55,770  INFO      src.visualization —   Saved plot: results\confusion_matrix_temporal_lstm.png
+2026-10-27 22:47:55,966  INFO      src.visualization —   Saved plot: results\pr_curve.png
+2026-10-27 22:47:56,158  INFO      src.visualization —   Saved plot: results\roc_curve.png
+2026-10-27 22:47:56,347  INFO      src.visualization —   Saved plot: results\model_comparison.png
+2026-10-27 22:47:56,482  INFO      src.visualization —   Saved plot: results\lead_time_distribution.png
+2026-10-27 22:47:56,645  INFO      src.visualization —   Saved plot: results\false_alarm_comparison.png
+2026-10-27 22:47:56,645  INFO      src.visualization — All plots generated.
+2026-10-27 22:47:56,645  INFO      phase10 — Phase 10 complete.
+2026-10-27 22:47:56,645  INFO      main — ============================================================
+2026-10-27 22:47:56,645  INFO      main — Pipeline finished.
+2026-10-27 22:47:56,645  INFO      main — ============================================================

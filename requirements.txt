@@ -1,0 +1,28 @@
+# Core
+numpy>=1.24.0
+pandas>=2.0.0
+scikit-learn>=1.3.0
+scipy>=1.11.0
+PyYAML>=6.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+plotly>=5.15.0
+
+# ML / Deep Learning
+xgboost>=1.7.0
+torch>=2.0.0
+
+# Anomaly Detection
+# (Isolation Forest is in scikit-learn)
+
+# Technical Analysis helpers
+ta>=0.10.0
+
+# Streamlit Dashboard
+streamlit>=1.28.0
+
+# Utilities
+joblib>=1.3.0
+tqdm>=4.65.0
